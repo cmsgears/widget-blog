@@ -1,0 +1,23 @@
+{
+	"name": "cmsgears/widget-blog",
+	"description": "The Blog widget for CMSGears.",
+	"homepage": "http://www.cmsgears.org",
+	"type": "package",
+	"keywords": [ "yii2", "cmsgears", "widget", "blog" ],
+	"license": "GPLv3",
+	"support": {
+        "source": "http://www.cmsgears.org/downloads/widgets/blog",
+		"forum": "http://forum.cmsgears.org/",
+		"resources": "http://resources.cmsgears.org/",
+		"issues": "https://www.amazingdesk.com/cmsgears/issues/",
+		"blog": "http://cmsgears.tutorials24x7.com/"
+	},
+	"autoload": {
+		"psr-4": {
+			"cmsgears\\widgets\\cleditor\\": ""
+		}
+	},
+    "require": {
+        "cmsgears/module-core": "*"
+    }
+}
