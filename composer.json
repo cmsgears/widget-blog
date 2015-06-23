@@ -14,10 +14,11 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"cmsgears\\widgets\\cleditor\\": ""
+			"cmsgears\\widgets\\blog\\": ""
 		}
 	},
     "require": {
-        "cmsgears/module-core": "*"
+        "cmsgears/module-core": "*",
+        "cmsgears/module-cms": "*"
     }
 }
