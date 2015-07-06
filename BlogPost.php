@@ -10,8 +10,6 @@ use yii\widgets\LinkPager;
 use cmsgears\core\common\services\Service;
 use cmsgears\cms\frontend\services\PostService;
 
-use cmsgears\core\common\utilities\CodeGenUtil;
-
 class BlogPost extends Widget {
 
 	// Variables ---------------------------------------------------
@@ -41,7 +39,7 @@ class BlogPost extends Widget {
 	/**
 	 * Show pagination if required. If it's true, it will append pagination.
 	 */
-	public $pagination	= false;
+	public $pagination	= true;
 
 	// Private Variables --------------------
 
@@ -79,7 +77,7 @@ class BlogPost extends Widget {
     public function run() {
 
 		// Get Posts Pagination
-		$dataProvider	= PostService::getPagination( [ 'conditions' => [ 'limit' => $this->limit ] ] );
+		$dataProvider	= PostService::getPagination( [ 'limit' => $this->limit ] );
         $models			= $dataProvider->getModels();
 		$postsHtml		= [];
 
@@ -94,12 +92,16 @@ class BlogPost extends Widget {
 
 		$postsHtml		= implode( "\n", $postsHtml );
 
+		$content 		= '';
+
 		if( $this->pagination ) {
 
-			return $this->render( $wrapperPath, [ 'postsHtml' => $postsHtml, 'dataProvider' => $dataProvider ] );
+			$content 	= $this->render( $wrapperPath, [ 'postsHtml' => $postsHtml, 'dataProvider' => $dataProvider ] );
 		}
 
-		return $this->render( $wrapperPath, [ 'postsHtml' => $postsHtml ] );
+		$content 		= $this->render( $wrapperPath, [ 'postsHtml' => $postsHtml ] );
+
+		return Html::tag( 'div', $content, $this->options );
     }
 }
 
