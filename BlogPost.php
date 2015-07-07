@@ -10,26 +10,13 @@ use yii\widgets\LinkPager;
 use cmsgears\core\common\services\Service;
 use cmsgears\cms\frontend\services\PostService;
 
-class BlogPost extends Widget {
+use cmsgears\core\common\utilities\CodeGenUtil;
+
+class BlogPost extends \cmsgears\core\widgets\BaseWidget {
 
 	// Variables ---------------------------------------------------
 
 	// Public Variables --------------------
-
-	/**
-	 * The html options for the parent container.
-	 */
-	public $options;
-
-	/**
-	 * The path at which view file is located. It can have alias. By default it's the views folder within widget directory.
-	 */
-	public $viewPath	= null;
-
-	/**
-	 * The view file used to render widget.
-	 */
-	public $view		= 'simple';
 
 	/**
 	 * Number of posts to be fetched at a time.
@@ -59,19 +46,6 @@ class BlogPost extends Widget {
 	// yii\base\Widget
 
 	/**
-	 * The method returns the view path for this widget if set while calling widget. 
-	 */
-	public function getViewPath() {
-
-		if( isset( $this->viewPath ) ) {
-
-			return $this->viewPath;
-		}
-
-		return parent::getViewPath();
-	}
-
-	/**
 	 * @inheritdoc
 	 */
     public function run() {
@@ -82,8 +56,8 @@ class BlogPost extends Widget {
 		$postsHtml		= [];
 
 		// Paths
-		$wrapperPath	= $this->view . "/wrapper";
-		$postPath		= $this->view . "/post";
+		$wrapperPath	= $this->viewFile . "/wrapper";
+		$postPath		= $this->viewFile . "/post";
 
         foreach( $models as $post ) {
 
