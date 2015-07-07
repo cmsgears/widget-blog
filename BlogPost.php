@@ -12,7 +12,7 @@ use cmsgears\cms\frontend\services\PostService;
 
 use cmsgears\core\common\utilities\CodeGenUtil;
 
-class BlogPost extends \cmsgears\core\widgets\BaseWidget {
+class BlogPost extends \cmsgears\core\common\widgets\BaseWidget {
 
 	// Variables ---------------------------------------------------
 
