@@ -6,18 +6,15 @@
 	"keywords": [ "yii2", "cmsgears", "widget", "blog" ],
 	"license": "GPLv3",
 	"support": {
-        "source": "http://www.cmsgears.org/downloads/widgets/blog",
-		"forum": "http://forum.cmsgears.org/",
-		"resources": "http://resources.cmsgears.org/",
-		"issues": "https://www.amazingdesk.com/cmsgears/issues/",
-		"blog": "http://cmsgears.tutorials24x7.com/"
+		"resources": "http://www.cmsgears.org/"
 	},
 	"autoload": {
 		"psr-4": {
-			"cmsgears\\widgets\\cleditor\\": ""
+			"cmsgears\\widgets\\blog\\": ""
 		}
 	},
     "require": {
-        "cmsgears/module-core": "*"
+        "cmsgears/module-core": "*",
+        "cmsgears/module-cms": "*"
     }
 }
