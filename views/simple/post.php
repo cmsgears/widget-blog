@@ -12,15 +12,13 @@ $authorInfo		= "<span class='info'>$author->name</span>";
 
 if( isset( $avatar ) ) {
 
-	$avatarThumb = $avatar->getThumbUrl(); 			
-	$authorInfo .= "<span class='avatar'><img class='avatar' src='$avatarThumb'></span>";
+	$avatarThumb  = $avatar->getThumbUrl(); 			
+	$avatarThumb = "<span class='left'><img class='avatar fluid' src='$avatarThumb'></span>";
 }
 else { 
 
-	$authorInfo .= "<span class='avatar'><img class='avatar' src='$defaultAvatar'></span>";
-}
-
-$authorInfo	   .= "<span class='info'>$author->name</span>";
+	$avatarThumb = "<span class='left'><img class='avatar fluid' src='$defaultAvatar'></span>";
+} 
 
 // Post Content
 $content		= $post->content;
@@ -39,14 +37,28 @@ if( isset( $banner ) ) {
 }
 else {
 
-	$postHtml	.= "<div class='post-content full'>";
+	$postHtml	.= "<div class='post-content full row clearfix max-cols-100'>";
 }
 
-$postHtml	.= "	<h2 class='post-header'>$title</h2>
-					<div class='summary'>$summary</div>
-					<div class='info clearfix'>
-						<span class='author'>$authorInfo</span>
-						<span class='time'>$postTime</span>
+$postHtml	.= "		<div class='col1'>
+							<h6 class='post-header'>$title</h6>
+						</div>	
+						<div class='col1 row clearfix'>
+							<div class='col12x2'>
+								<span class='author'$avatarThumb</span>
+							</div>
+							<div class='col12x10 row clearfix'>
+								<div class='col12x6'>
+									<span class='time'>$authorInfo</span>
+								</div>
+								<div class='col12x6 align align-right'>
+									<span class='time'>$postTime</span>
+								</div>	
+								<div class='col1'>
+									<div class='summary'>$summary</div>
+								</div>			
+							</div>	
+						</div>	
 					</div>
 				</div>";
 
