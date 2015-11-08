@@ -12,7 +12,7 @@ use cmsgears\cms\frontend\services\PostService;
 
 use cmsgears\core\common\utilities\CodeGenUtil;
 
-class BlogPost extends \cmsgears\core\common\base\Widget {
+class PopularPost extends \cmsgears\core\common\base\Widget {
 
 	// Variables ---------------------------------------------------
 
@@ -69,12 +69,11 @@ class BlogPost extends \cmsgears\core\common\base\Widget {
 		$content 		= '';
 
 		if( $this->pagination ) {
-			
+
 			$content 	= $this->render( $wrapperPath, [ 'postsHtml' => $postsHtml, 'dataProvider' => $dataProvider ] );
 		}
-		else {
-			$content 		= $this->render( $wrapperPath, [ 'postsHtml' => $postsHtml ] );
-		}	
+
+		$content 		= $this->render( $wrapperPath, [ 'postsHtml' => $postsHtml ] );
 
 		return Html::tag( 'div', $content, $this->options );
     }
