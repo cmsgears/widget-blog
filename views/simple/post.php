@@ -7,7 +7,7 @@ use yii\helpers\Html;
 // Post Author
 $author			= $post->creator;
 $avatar			= $author->avatar;
-$defaultAvatar	= Yii::getAlias('@web') . '/images/avatar.png';
+$defaultAvatar	= Yii::getAlias( '@web' ) . '/images/avatar.png';
 $authorInfo		= "<span class='info'>$author->name</span>";
 
 if( isset( $avatar ) ) {
@@ -23,8 +23,17 @@ else {
 // Post Content
 $content		= $post->content;
 $banner			= $content->banner;
-$title			= Html::a( $post->name, [ '/post/' . $post->slug ] );
-$view			= Html::a( 'VIEW POST', [ '/post/' . $post->slug ], [ 'class' => 'btn' ] );
+
+$postUrl		= Url::toRoute( [ '/post/' . $post->slug ] );
+
+if( Yii::$app->cmgCore->multiSite && Yii::$app->cmgCore->subDirectory ) {
+	
+	$site		= $post->site;
+	$postUrl	= Url::toRoute( [ "/$site->slug/post/$post->slug" ] );
+}
+
+$title			= Html::a( $post->name, $postUrl );
+$view			= Html::a( 'VIEW POST', $postUrl, [ 'class' => 'btn' ] );
 $summary		= $content->summary;
 $postTime		= $content->publishedAt;
 $postHtml		= "";
@@ -32,7 +41,7 @@ $postHtml		= "";
 if( isset( $banner ) ) {
 
 	$bannerUrl	 = $banner->getThumbUrl();
-	$bannerUrl	 = Html::a( "<img class='fluid' src='$bannerUrl' />", [ '/post/' . $post->slug ] );
+	$bannerUrl	 = Html::a( "<img class='fluid' src='$bannerUrl' />", $postUrl );
 	$postHtml	.= "<div class='banner'>$bannerUrl</div><div class='post-content'>";
 }
 else {
