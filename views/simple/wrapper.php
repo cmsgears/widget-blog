@@ -30,7 +30,7 @@ use cmsgears\core\common\utilities\CodeGenUtil;
 
 <?php
 
-if( $pagination && isset( $dataProvider ) ) {
+if( $pagination && strlen( $postsHtml ) > 0 && isset( $dataProvider ) ) {
 
 	$pagination	= $dataProvider->getPagination();
 	$pageInfo	= CodeGenUtil::getPaginationDetail( $dataProvider );
