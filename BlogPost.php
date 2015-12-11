@@ -24,7 +24,9 @@ class BlogPost extends \cmsgears\core\common\base\Widget {
 	/**
 	 * Number of posts to be fetched at a time.
 	 */
-	public $limit		= Service::PAGE_LIMIT;
+	public $limit			= Service::PAGE_LIMIT;
+
+	public $summaryLimit	= 200; // Limits summary to 200 chars
 	
 	/**
 	 * Show pagination if required. If it's true, it will append pagination.
@@ -99,7 +101,7 @@ class BlogPost extends \cmsgears\core\common\base\Widget {
 
         foreach( $models as $post ) {
 
-            $postsHtml[] = $this->render( $postPath, [ 'basePath' => $this->basePath, 'post' => $post ] );
+            $postsHtml[] = $this->render( $postPath, [ 'basePath' => $this->basePath, 'summaryLimit' => $this->summaryLimit, 'post' => $post ] );
         }
 
 		$postsHtml		= implode( '', $postsHtml );

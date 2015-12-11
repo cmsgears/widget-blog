@@ -3,6 +3,7 @@
 // Yii Imports
 use \Yii;
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 // Post Author
 $author			= $post->creator;
@@ -47,6 +48,11 @@ if( isset( $banner ) ) {
 else {
 
 	$postHtml	.= "<div class='post-content full row clearfix max-cols-100'>";
+}
+
+if( strlen( $summary ) > $summaryLimit ) {
+	
+	$summary	= substr( $summary, 0, $summaryLimit );
 }
 
 $postHtml	.= "		<div class='col1'>
