@@ -68,7 +68,7 @@ class BlogPost extends \cmsgears\core\common\base\Widget {
 
 		$this->initDataProvider();
 		
-		return $this->renderPosts();
+		return $this->renderWidget();
     }
 	
 	// BlogPost
@@ -89,7 +89,7 @@ class BlogPost extends \cmsgears\core\common\base\Widget {
 		}
 	}
 
-	public function renderPosts() {
+	public function renderWidget( $config = [] ) {
 
 		// Get Posts Pagination
         $models			= $this->dataProvider->getModels();
