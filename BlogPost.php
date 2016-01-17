@@ -2,8 +2,8 @@
 namespace cmsgears\widgets\blog;
 
 use \Yii;
-use yii\base\Widget;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\LinkPager;
 
 // CMG Imports
@@ -21,30 +21,29 @@ class BlogPost extends \cmsgears\core\common\base\Widget {
 
 	// Public Variables --------------------
 
-	/**
-	 * Number of posts to be fetched at a time.
-	 */
-	public $limit			= Service::PAGE_LIMIT;
+	// Path for all posts
+	public $allPath		= 'posts';
 
+	// Path for single post
+	public $singlePath	= 'post';
+
+	// Pagination
+	public $paging			= true;
+	public $limit			= Service::PAGE_LIMIT; 
+	public $pageInfo		= null;
+	public $pageLinks		= null;
+
+	// Limit text displayed
 	public $summaryLimit	= 200; // Limits summary to 200 chars
-	
-	/**
-	 * Show pagination if required. If it's true, it will append pagination.
-	 */
-	public $basePath	= 'posts';
 
-	/**
-	 * Show pagination if required. If it's true, it will append pagination.
-	 */
-	public $pagination	= true;
-
-	public $excludeMain	= false; // multisite environment - exclude main site posts
-
-	public $sitePosts	= false; // multisite environment - show only current site posts
+	// Filter Posts	- multisite environment
+	public $excludeMain	= false; // exclude main site posts
+	public $sitePosts	= false; // show only current site posts
 
 	// Private Variables --------------------
 
 	protected $dataProvider	= null;
+	protected $models		= [];
 
 	// Constructor and Initialisation ------------------------------
 
@@ -54,7 +53,18 @@ class BlogPost extends \cmsgears\core\common\base\Widget {
 
         parent::init();
 
-		// Do init tasks
+		$this->initDataProvider();
+
+		// Initialise models
+		$dataProvider	= $this->dataProvider;
+		$this->models	= $dataProvider->getModels();
+
+		if( $this->paging ) {
+
+			$pagination			= $dataProvider->getPagination();
+			$this->pageInfo		= CodeGenUtil::getPaginationDetail( $dataProvider );
+			$this->pageLinks	= LinkPager::widget( [ 'pagination' => $pagination ] );
+		}
     }
 
 	// Instance Methods --------------------------------------------
@@ -66,11 +76,50 @@ class BlogPost extends \cmsgears\core\common\base\Widget {
 	 */
     public function run() {
 
-		$this->initDataProvider();
-		
 		return $this->renderWidget();
     }
-	
+
+	// cmsgears\core\common\base\Widget
+
+	public function renderWidget( $config = [] ) {
+
+		// Get Posts Pagination
+		$postsHtml		= [];
+
+		// Paths
+		$wrapperPath	= $this->template . '/wrapper';
+		$postPath		= $this->template . '/post';
+
+		$models			= $this->models;
+
+		if( Yii::$app->cmgCore->multiSite && Yii::$app->cmgCore->subDirectory ) {
+
+			$siteName			= Yii::$app->cmgCore->getSiteName();
+			$this->allPath		= Url::toRoute( [ "/$siteName/$this->allPath" ], true );
+			$this->singlePath	= Url::toRoute( [ "/$siteName/$this->singlePath" ], true );
+		}
+		else {
+
+			$this->allPath		= Url::toRoute( [ "/$this->allPath" ], true );
+			$this->singlePath	= Url::toRoute( [ "/$this->singlePath" ], true );
+		}
+
+        foreach( $models as $post ) {
+
+			$url			= "$this->singlePath/$post->slug";
+            $postsHtml[] 	= $this->render( $postPath, [ 'post' => $post, 'url' => $url, 'summaryLimit' => $this->summaryLimit ] );
+        }
+
+		$postsHtml		= implode( '', $postsHtml );
+
+		$content		= $this->render( $wrapperPath, [
+								'allPath' => $this->allPath, 'postsHtml' => $postsHtml, 
+								'paging' =>  $this->paging, 'pageInfo' =>  $this->pageInfo, 'pageLinks' =>  $this->pageLinks 
+							]);
+
+		return Html::tag( 'div', $content, $this->options );
+	}
+
 	// BlogPost
 
 	public function initDataProvider() {
@@ -87,43 +136,6 @@ class BlogPost extends \cmsgears\core\common\base\Widget {
 
 			$this->dataProvider	= PostService::getPagination( [ 'limit' => $this->limit ] );
 		}
-	}
-
-	public function renderWidget( $config = [] ) {
-
-		// Get Posts Pagination
-        $models			= $this->dataProvider->getModels();
-		$postsHtml		= [];
-
-		// Paths
-		$wrapperPath	= $this->template . '/wrapper';
-		$postPath		= $this->template . '/post';
-
-        foreach( $models as $post ) {
-
-            $postsHtml[] = $this->render( $postPath, [ 'basePath' => $this->basePath, 'summaryLimit' => $this->summaryLimit, 'post' => $post ] );
-        }
-
-		$postsHtml		= implode( '', $postsHtml );
-
-		$content 		= '';
-
-		if( $this->pagination ) {
-
-			$content 	= $this->render( $wrapperPath, [ 
-								'basePath' => $this->basePath, 'postsHtml' => $postsHtml, 
-								'pagination' =>  $this->pagination, 'dataProvider' => $this->dataProvider 
-							]);
-		}
-		else {
-
-			$content	= $this->render( $wrapperPath, [ 
-								'basePath' => $this->basePath, 'postsHtml' => $postsHtml, 
-								'pagination' =>  $this->pagination 
-							]);
-		}
-
-		return Html::tag( 'div', $content, $this->options );
 	}
 }
 
