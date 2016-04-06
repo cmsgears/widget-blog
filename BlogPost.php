@@ -7,8 +7,7 @@ use yii\helpers\Url;
 use yii\widgets\LinkPager;
 
 // CMG Imports
-use cmsgears\core\common\services\Service;
-use cmsgears\cms\frontend\services\PostService;
+use cmsgears\cms\frontend\services\entities\PostService;
 
 use cmsgears\core\common\utilities\CodeGenUtil;
 
@@ -29,7 +28,7 @@ class BlogPost extends \cmsgears\core\common\base\Widget {
 
 	// Pagination
 	public $paging			= true;
-	public $limit			= Service::PAGE_LIMIT; 
+	public $limit			= PostService::PAGE_LIMIT;
 	public $pageInfo		= null;
 	public $pageLinks		= null;
 
@@ -113,8 +112,8 @@ class BlogPost extends \cmsgears\core\common\base\Widget {
 		$postsHtml		= implode( '', $postsHtml );
 
 		$content		= $this->render( $wrapperPath, [
-								'allPath' => $this->allPath, 'postsHtml' => $postsHtml, 
-								'paging' =>  $this->paging, 'pageInfo' =>  $this->pageInfo, 'pageLinks' =>  $this->pageLinks 
+								'allPath' => $this->allPath, 'postsHtml' => $postsHtml,
+								'paging' =>  $this->paging, 'pageInfo' =>  $this->pageInfo, 'pageLinks' =>  $this->pageLinks
 							]);
 
 		return Html::tag( 'div', $content, $this->options );
