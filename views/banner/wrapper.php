@@ -1,16 +1,31 @@
-<?= $postsHtml ?>
+<?php
+// Yii Imports
+use \Yii;
+use yii\helpers\Html;
+?>
 
-<?php if( !$paging && strlen( $postsHtml ) > 0 ) { ?>
-	<div class="filler-height filler-height-medium"></div>
-	<div class="row align align-right right">
-		<a href="<?= $allPath ?>" class="btn btn-medium">VIEW ALL</a>
-	</div>
-<?php } else if( strlen( $postsHtml ) <= 0 ) { ?>
-	<p>No posts found.</p>
-<?php } ?>
+<div <?= Html::renderTagAttributes( $widget->wrapperOptions ) ?>>
+	<?php if( strlen( $modelsHtml ) > 0 ) { ?>
 
-<?php if( $paging && strlen( $postsHtml ) > 0 ) { ?>
-	<div class='wrap-pagination clearfix'>
-		<div class='info'><?= $pageInfo ?></div> <?= $pageLinks ?>
-	</div>
-<?php } ?>
+		<div class="wrap-models">
+			<?= $modelsHtml ?>
+		</div>
+
+		<?php if( $widget->pagination && $widget->paging ) { ?>
+			<div class="filler-height filler-height-medium"></div>
+			<div class='wrap-pagination clearfix'>
+				<div class='info'><?= $pageInfo ?></div> <?= $pageLinks ?>
+			</div>
+		<?php } ?>
+
+		<?php if( $widget->showAllPath ) { ?>
+			<div class="filler-height filler-height-medium"></div>
+			<div class="wrap-all">
+				<a href="<?= $widget-allPath ?>" class="btn btn-medium">VIEW ALL</a>
+			</div>
+		<?php } ?>
+
+	<?php } else { ?>
+		<p>No posts found.</p>
+	<?php } ?>
+</div>

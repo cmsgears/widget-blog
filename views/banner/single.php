@@ -1,5 +1,4 @@
 <?php
-
 // Yii Imports
 use \Yii;
 use yii\helpers\Html;
@@ -9,12 +8,14 @@ use yii\helpers\Url;
 use cmsgears\core\common\utilities\CodeGenUtil;
 
 // Post Author
-$author			= $post->creator;
+$author			= $model->creator;
 $avatar			= CodeGenUtil::getImageThumbTag( $author->avatar, [ 'image' => 'avatar.png' ] );
 
 // Post Content
-$content		= $post->content;
+$content		= $model->content;
 $banner			= CodeGenUtil::getFileUrl( $content->banner, [ 'image' => 'banner.jpg' ] );
+
+$url			= "$widget->singlePath/$model->slug";
 ?>
 
 <div class="post">
@@ -30,8 +31,8 @@ $banner			= CodeGenUtil::getFileUrl( $content->banner, [ 'image' => 'banner.jpg'
 	</div>
 
 	<div class="wrap-post-content">
-		<h2 class="post-title"><a href="<?= $url ?>"><?= $post->name ?></a></h2>
-		<div class="post-content"><?= $content->getLimitedSummary( $summaryLimit ) ?></div>
+		<h2 class="post-title"><a href="<?= $url ?>"><?= $model->name ?></a></h2>
+		<div class="post-content"><?= $content->getLimitedSummary( $widget->textLimit ) ?></div>
 		<div class="post-info max-cols clearfix">
 			<div class="post-author col3x2">
 				<span class="post-author-avatar circled1"><a href="<?= $url ?>"><?= $avatar ?></a></span>
