@@ -12,7 +12,7 @@ $author			= $model->creator;
 $avatar			= CodeGenUtil::getImageThumbTag( $author->avatar, [ 'image' => 'avatar.png' ] );
 
 // Post Content
-$content		= $model->content;
+$content		= $model->modelContent;
 $banner			= CodeGenUtil::getFileUrl( $content->banner, [ 'image' => 'banner.jpg' ] );
 
 $url			= "$widget->singlePath/$model->slug";

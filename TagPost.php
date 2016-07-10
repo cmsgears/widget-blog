@@ -6,9 +6,7 @@ use \Yii;
 
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
-
-use cmsgears\core\common\services\resources\TagService;
-use cmsgears\cms\frontend\services\entities\PostService;
+use cmsgears\cms\common\config\CmsGlobal;
 
 /**
  * It shows the most recent posts published on site for a specific tag.
@@ -26,26 +24,31 @@ class TagPost extends \cmsgears\core\common\base\PageWidget {
 	public $singlePath		= 'post';
 
 	public $slug			= null;
+	public $type			= CmsGlobal::TYPE_POST;
 	public $tag				= null;
 
 	// Constructor and Initialisation ------------------------------
 
 	public function initModels( $config = [] ) {
 
+		$tagService		= Yii::$app->factory->get( 'tagService' );
+		$postService	= Yii::$app->factory->get( 'postService' );
+
 		if( isset( $this->slug ) ) {
 
-			$this->tag	= TagService::findBySlug( $this->slug );
+			$this->tag	= $tagService->getBySlugType( $this->slug, CmsGlobal::TYPE_POST );
 		}
 
 		if( isset( $this->tag ) ) {
 
 			$slug				= $this->tag->slug;
 
-			$this->dataProvider	= PostService::getPaginationForSearch([
+			$this->dataProvider	= $postService->getPageForSearch([
 										'tag' => $this->tag,
 										'limit' => $this->limit,
 										'route' => "tag/$slug"
 									]);
+
 			$this->modelPage	= $this->dataProvider->getModels();
 		}
 	}

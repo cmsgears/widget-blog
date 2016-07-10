@@ -6,9 +6,7 @@ use \Yii;
 
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
-
-use cmsgears\core\common\services\resources\CategoryService;
-use cmsgears\cms\frontend\services\entities\PostService;
+use cmsgears\cms\common\config\CmsGlobal;
 
 /**
  * It shows the most recent posts published on site for a specific category.
@@ -26,23 +24,26 @@ class CategoryPost extends \cmsgears\core\common\base\PageWidget {
 	public $singlePath		= 'post';
 
 	public $slug			= null;
-	public $type			= null;
+	public $type			= CmsGlobal::TYPE_POST;
 	public $category		= null;
 
 	// Constructor and Initialisation ------------------------------
 
 	public function initModels( $config = [] ) {
 
+		$categoryService	= Yii::$app->factory->get( 'categoryService' );
+		$postService		= Yii::$app->factory->get( 'postService' );
+
 		if( isset( $this->slug ) && isset( $this->type ) ) {
 
-			$this->category	= CategoryService::findBySlugType( $this->slug, $this->type );
+			$this->category	= $categoryService->getBySlugType( $this->slug, $this->type );
 		}
 
 		if( isset( $this->category ) ) {
 
 			$slug				= $this->category->slug;
 
-			$this->dataProvider	= PostService::getPaginationForSearch([
+			$this->dataProvider	= $postService->getPageForSearch([
 										'category' => $this->category,
 										'limit' => $this->limit,
 										'route' => "category/$slug"

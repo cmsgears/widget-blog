@@ -16,7 +16,19 @@ class BlogPost extends \cmsgears\core\common\base\PageWidget {
 
 	// Variables ---------------------------------------------------
 
-	// Public Variables --------------------
+	// Globals -------------------------------
+
+	// Constants --------------
+
+	// Public -----------------
+
+	// Protected --------------
+
+	protected $postService;
+
+	// Variables -----------------------------
+
+	// Public -----------------
 
 	// Path for all posts
 	public $allPath			= 'posts';
@@ -24,25 +36,44 @@ class BlogPost extends \cmsgears\core\common\base\PageWidget {
 	// Path for single post
 	public $singlePath		= 'post';
 
+	// Private ----------------
+
+	// Traits ------------------------------------------------------
+
 	// Constructor and Initialisation ------------------------------
 
 	public function initModels( $config = [] ) {
 
+		$this->postService	= Yii::$app->factory->get( 'postService' );
+
 		if( $this->excludeMain ) {
 
-			$this->dataProvider	= PostService::getPaginationForChildSites( [ 'limit' => $this->limit ] );
+			$this->dataProvider	= $this->postService->getPublicPageForChildSites( [ 'limit' => $this->limit ] );
 		}
 		else if( $this->siteModels ) {
 
-			$this->dataProvider	= PostService::getPaginationForSite( [ 'limit' => $this->limit ] );
+			$this->dataProvider	= $this->postService->getPage( [ 'limit' => $this->limit, 'multiSite' => true ] );
 		}
 		else {
 
-			$this->dataProvider	= PostService::getPagination( [ 'limit' => $this->limit ] );
+			$this->dataProvider	= $this->postService->getPage( [ 'limit' => $this->limit, 'multiSite' => false ] );
 		}
 
 		$this->modelPage	= $this->dataProvider->getModels();
 	}
-}
 
-?>
+
+	// Instance methods --------------------------------------------
+
+	// Yii interfaces ------------------------
+
+	// Yii parent classes --------------------
+
+	// yii\base\Widget --------
+
+	// CMG interfaces ------------------------
+
+	// CMG parent classes --------------------
+
+	// BlogPost ------------------------------
+}
