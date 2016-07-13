@@ -7,8 +7,6 @@ use \Yii;
 // CMG Imports
 use cmsgears\core\common\config\CoreGlobal;
 
-use cmsgears\cms\frontend\services\entities\PostService;
-
 /**
  * It shows the most recent posts published on site.
  */
