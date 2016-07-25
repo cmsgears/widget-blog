@@ -29,10 +29,10 @@ class BlogPost extends \cmsgears\core\common\base\PageWidget {
 	// Public -----------------
 
 	// Path for all posts
-	public $allPath			= 'posts';
+	public $allPath			= 'blog';
 
 	// Path for single post
-	public $singlePath		= 'post';
+	public $singlePath		= 'blog';
 
 	// Private ----------------
 
@@ -50,11 +50,11 @@ class BlogPost extends \cmsgears\core\common\base\PageWidget {
 		}
 		else if( $this->siteModels ) {
 
-			$this->dataProvider	= $this->postService->getPage( [ 'limit' => $this->limit, 'multiSite' => true ] );
+			$this->dataProvider	= $this->postService->getPublicPage( [ 'limit' => $this->limit, 'multiSite' => true ] );
 		}
 		else {
 
-			$this->dataProvider	= $this->postService->getPage( [ 'limit' => $this->limit, 'multiSite' => false ] );
+			$this->dataProvider	= $this->postService->getPublicPage( [ 'limit' => $this->limit, 'multiSite' => false ] );
 		}
 
 		$this->modelPage	= $this->dataProvider->getModels();
