@@ -15,42 +15,78 @@ class CategoryPost extends \cmsgears\core\common\base\PageWidget {
 
 	// Variables ---------------------------------------------------
 
-	// Public Variables --------------------
+	// Globals -------------------------------
+
+	// Constants --------------
+
+	// Public -----------------
+
+	// Protected --------------
+
+	// Variables -----------------------------
+
+	// Public -----------------
 
 	// Path for all posts
-	public $allPath			= 'posts';
+	public $allPath			= 'blog';
 
 	// Path for single post
-	public $singlePath		= 'post';
+	public $singlePath		= 'blog';
 
 	public $slug			= null;
 	public $type			= CmsGlobal::TYPE_POST;
 	public $category		= null;
 
+	public $modelService	= 'postService';
+	public $route			= 'category';
+
+	// Protected --------------
+
+	// Private ----------------
+
+	// Traits ------------------------------------------------------
+
 	// Constructor and Initialisation ------------------------------
 
 	public function initModels( $config = [] ) {
 
-		$categoryService	= Yii::$app->factory->get( 'categoryService' );
-		$postService		= Yii::$app->factory->get( 'postService' );
-
+		// Get category if not set
 		if( isset( $this->slug ) && isset( $this->type ) ) {
 
-			$this->category	= $categoryService->getBySlugType( $this->slug, $this->type );
+			$categoryService	= Yii::$app->factory->get( 'categoryService' );
+			$this->category		= $categoryService->getBySlugType( $this->slug, $this->type );
 		}
 
 		if( isset( $this->category ) ) {
 
+			$modelService		= Yii::$app->factory->get( $this->modelService );
+
 			$slug				= $this->category->slug;
 
-			$this->dataProvider	= $postService->getPageForSearch([
+			$this->dataProvider	= $modelService->getPageForSearch([
 										'category' => $this->category,
 										'limit' => $this->limit,
-										'route' => "category/$slug"
+										'route' => "$this->route/$slug"
 									]);
+
 			$this->modelPage	= $this->dataProvider->getModels();
 		}
 	}
-}
 
-?>
+	// Instance methods --------------------------------------------
+
+	// Yii interfaces ------------------------
+
+	// Yii parent classes --------------------
+
+	// yii\base\Widget --------
+
+	// CMG interfaces ------------------------
+
+	// CMG parent classes --------------------
+
+	// cmsgears\core\common\base\Widget
+
+	// CategoryPost --------------------------
+
+}

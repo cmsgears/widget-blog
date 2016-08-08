@@ -15,43 +15,78 @@ class TagPost extends \cmsgears\core\common\base\PageWidget {
 
 	// Variables ---------------------------------------------------
 
-	// Public Variables --------------------
+	// Globals -------------------------------
+
+	// Constants --------------
+
+	// Public -----------------
+
+	// Protected --------------
+
+	// Variables -----------------------------
+
+	// Public -----------------
 
 	// Path for all posts
-	public $allPath			= 'posts';
+	public $allPath			= 'blog';
 
 	// Path for single post
-	public $singlePath		= 'post';
+	public $singlePath		= 'blog';
 
 	public $slug			= null;
 	public $type			= CmsGlobal::TYPE_POST;
 	public $tag				= null;
 
+	public $modelService	= 'postService';
+	public $route			= 'tag';
+
+	// Protected --------------
+
+	// Private ----------------
+
+	// Traits ------------------------------------------------------
+
 	// Constructor and Initialisation ------------------------------
 
 	public function initModels( $config = [] ) {
 
-		$tagService		= Yii::$app->factory->get( 'tagService' );
-		$postService	= Yii::$app->factory->get( 'postService' );
+		// Get tag if not set
+		if( isset( $this->slug ) && isset( $this->type ) ) {
 
-		if( isset( $this->slug ) ) {
-
-			$this->tag	= $tagService->getBySlugType( $this->slug, CmsGlobal::TYPE_POST );
+			$tagService		= Yii::$app->factory->get( 'tagService' );
+			$this->tag		= $tagService->getBySlugType( $this->slug, $this->type );
 		}
 
 		if( isset( $this->tag ) ) {
 
+			$modelService		= Yii::$app->factory->get( $this->modelService );
+
 			$slug				= $this->tag->slug;
 
-			$this->dataProvider	= $postService->getPageForSearch([
+			$this->dataProvider	= $modelService->getPageForSearch([
 										'tag' => $this->tag,
 										'limit' => $this->limit,
-										'route' => "tag/$slug"
+										'route' => "$this->route/$slug"
 									]);
 
 			$this->modelPage	= $this->dataProvider->getModels();
 		}
 	}
-}
 
-?>
+	// Instance methods --------------------------------------------
+
+	// Yii interfaces ------------------------
+
+	// Yii parent classes --------------------
+
+	// yii\base\Widget --------
+
+	// CMG interfaces ------------------------
+
+	// CMG parent classes --------------------
+
+	// cmsgears\core\common\base\Widget
+
+	// TagPost -------------------------------
+
+}
