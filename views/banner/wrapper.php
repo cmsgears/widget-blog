@@ -1,6 +1,5 @@
 <?php
 // Yii Imports
-use \Yii;
 use yii\helpers\Html;
 ?>
 
@@ -14,7 +13,7 @@ use yii\helpers\Html;
 		<?php if( $widget->pagination && $widget->paging ) { ?>
 			<div class="filler-height filler-height-medium"></div>
 			<div class='wrap-pagination clearfix'>
-				<div class='info'><?= $pageInfo ?></div> <?= $pageLinks ?>
+				<div class='info'><?= $widget->pageInfo ?></div> <?= $widget->pageLinks ?>
 			</div>
 		<?php } ?>
 
