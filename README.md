@@ -4,7 +4,7 @@ Widget  	- Blog Widget
 
 License 	- GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
 
-Description - The Blog widget for CMSGears.
+Description - The Blog widget for CMSGears. It provide options to render blog, category, tag and author posts.
 
 Highlighted Features
 =========================================
