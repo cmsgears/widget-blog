@@ -23,7 +23,6 @@ class BlogPost extends \cmsgears\core\common\base\PageWidget {
 	// Public -----------------
 
 	// Protected --------------
-
 	protected $postService;
 
 	// Variables -----------------------------
@@ -42,6 +41,7 @@ class BlogPost extends \cmsgears\core\common\base\PageWidget {
 	// Model in action required for widgets on single pages
 	public $model;
 
+        public $route;
 	// Private ----------------
 
 	// Traits ------------------------------------------------------
@@ -61,21 +61,21 @@ class BlogPost extends \cmsgears\core\common\base\PageWidget {
 
 					$this->dataProvider	= $this->postService->getPageForSearch([
 												'route' => 'blog/search', 'public' => true, 'excludeMainSite' => true,
-												'searchContent' => true, 'searchCategory' => true, 'searchTag' => true
+												'searchContent' => true, 'searchCategory' => true, 'searchTag' => true, 'limit' => $this->limit
 											]);
 				}
 				else if( $this->siteModels ) {
 
 					$this->dataProvider	= $this->postService->getPageForSearch([
 												'route' => 'blog/search', 'public' => true, 'siteOnly' => true,
-												'searchContent' => true, 'searchCategory' => true, 'searchTag' => true
+												'searchContent' => true, 'searchCategory' => true, 'searchTag' => true,'limit' => $this->limit
 											]);
 				}
 				else {
 
 					$this->dataProvider	= $this->postService->getPageForSearch([
 												'route' => 'blog/search', 'public' => true,
-												'searchContent' => true, 'searchCategory' => true, 'searchTag' => true
+												'searchContent' => true, 'searchCategory' => true, 'searchTag' => true, 'limit' => $this->limit
 											]);
 				}
 			}
