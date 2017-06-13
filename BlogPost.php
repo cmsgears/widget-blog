@@ -2,17 +2,15 @@
 namespace cmsgears\widgets\blog;
 
 // Yii Imports
-use \Yii;
+use Yii;
 
 // CMG Imports
-use cmsgears\core\common\config\CoreGlobal;
-
-use cmsgears\cms\common\models\entities\Post;
+use cmsgears\core\common\base\PageWidget;
 
 /**
  * It shows the most recent posts published on site.
  */
-class BlogPost extends \cmsgears\core\common\base\PageWidget {
+class BlogPost extends PageWidget {
 
 	// Variables ---------------------------------------------------
 
@@ -23,11 +21,18 @@ class BlogPost extends \cmsgears\core\common\base\PageWidget {
 	// Public -----------------
 
 	// Protected --------------
-	protected $postService;
 
 	// Variables -----------------------------
 
 	// Public -----------------
+
+	public $options			= [ 'class' => 'blog blog-banner' ];
+
+	public $wrapperOptions	= [ 'class' => 'wrap-posts row max-cols-50' ];
+
+	public $singleOptions	= [ 'class' => 'post col col12x6 row' ];
+
+	public $template		= 'banner';
 
 	// Path for all posts
 	public $allPath			= 'blog';
@@ -38,10 +43,15 @@ class BlogPost extends \cmsgears\core\common\base\PageWidget {
 	// Widget - Required for widgets and works only if pagination is false. The possible values can be - popular, recent, similar, related
 	public $widget			= 'recent';
 
+	public $excludeParams	= [ 'slug' ];
+
 	// Model in action required for widgets on single pages
 	public $model;
 
-        public $route;
+	// Protected --------------
+
+	protected $postService;
+
 	// Private ----------------
 
 	// Traits ------------------------------------------------------
@@ -61,21 +71,24 @@ class BlogPost extends \cmsgears\core\common\base\PageWidget {
 
 					$this->dataProvider	= $this->postService->getPageForSearch([
 												'route' => 'blog/search', 'public' => true, 'excludeMainSite' => true,
-												'searchContent' => true, 'searchCategory' => true, 'searchTag' => true, 'limit' => $this->limit
+												'searchContent' => true, 'searchCategory' => true, 'searchTag' => true,
+												'limit' => $this->limit
 											]);
 				}
 				else if( $this->siteModels ) {
 
 					$this->dataProvider	= $this->postService->getPageForSearch([
 												'route' => 'blog/search', 'public' => true, 'siteOnly' => true,
-												'searchContent' => true, 'searchCategory' => true, 'searchTag' => true,'limit' => $this->limit
+												'searchContent' => true, 'searchCategory' => true, 'searchTag' => true,
+												'limit' => $this->limit
 											]);
 				}
 				else {
 
 					$this->dataProvider	= $this->postService->getPageForSearch([
 												'route' => 'blog/search', 'public' => true,
-												'searchContent' => true, 'searchCategory' => true, 'searchTag' => true, 'limit' => $this->limit
+												'searchContent' => true, 'searchCategory' => true, 'searchTag' => true,
+												'limit' => $this->limit
 											]);
 				}
 			}
@@ -90,7 +103,10 @@ class BlogPost extends \cmsgears\core\common\base\PageWidget {
 				// Recent posts
 				case 'recent': {
 
-					$this->modelPage	= $this->postService->getModels( [ 'advanced' => true, 'public' => true, 'limit' => $this->limit, 'sort' => [ 'id' => SORT_DESC ] ] );
+					$this->modelPage	= $this->postService->getModels([
+												'advanced' => true, 'public' => true,
+												'limit' => $this->limit, 'sort' => [ 'id' => SORT_DESC ]
+											]);
 
 					break;
 				}
@@ -100,7 +116,10 @@ class BlogPost extends \cmsgears\core\common\base\PageWidget {
 					$categoryIds		= $this->model->getCategoryIdList( true );
 					$tagIds				= $this->model->getTagIdList( true );
 
-					$this->modelPage	= $this->postService->getSimilar( [ 'tags' => $tagIds, 'categories' => $categoryIds ] );
+					$this->modelPage	= $this->postService->getSimilar([
+												'tags' => $tagIds, 'categories' => $categoryIds,
+												[ 'limit' => $this->limit ]
+											]);
 
 					break;
 				}
