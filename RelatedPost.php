@@ -2,15 +2,15 @@
 namespace cmsgears\widgets\blog;
 
 // Yii Imports
-use \Yii;
+use Yii;
 
 // CMG Imports
 use cmsgears\cms\common\config\CmsGlobal;
 
 /**
- * It shows the most recent posts published on site for a specific category.
+ * It shows the related posts.
  */
-class CategoryPost extends \cmsgears\core\common\base\PageWidget {
+class RelatedPost extends \cmsgears\core\common\base\PageWidget {
 
 	// Variables ---------------------------------------------------
 
@@ -32,12 +32,11 @@ class CategoryPost extends \cmsgears\core\common\base\PageWidget {
 	// Path for single post
 	public $singlePath		= 'blog';
 
-	public $slug			= null;
 	public $type			= CmsGlobal::TYPE_POST;
-	public $category		= null;
 
 	public $modelService	= 'postService';
-	public $route			= 'category';
+
+	public $model			= null;
 
 	// Protected --------------
 
@@ -49,28 +48,12 @@ class CategoryPost extends \cmsgears\core\common\base\PageWidget {
 
 	public function initModels( $config = [] ) {
 
-		// Get category if not set
-		if( isset( $this->slug ) && isset( $this->type ) ) {
+		$categoryIds		= $this->model->getCategoryIdList( true );
+		$tagIds				= $this->model->getTagIdList( true );
 
-			$categoryService	= Yii::$app->factory->get( 'categoryService' );
-			$this->category		= $categoryService->getBySlugType( $this->slug, $this->type );
-		}
+		$this->dataProvider	= Yii::$app->factory->get( 'postService' )->getPageForSimilar( [ 'categories' => $categoryIds, 'tags' => $tagIds, 'modelId' => $this->model->id ] );
 
-		if( isset( $this->category ) ) {
-
-			$modelService		= Yii::$app->factory->get( $this->modelService );
-
-			$slug				= $this->category->slug;
-
-			$this->dataProvider	= $modelService->getPageForSearch([
-										'category' => $this->category,
-										'limit' => $this->limit,
-										'route' => "$this->route/$slug",
-										'parentType' => $this->type
-									]);
-
-			$this->modelPage	= $this->dataProvider->getModels();
-		}
+		$this->modelPage	= $this->dataProvider->getModels();
 	}
 
 	// Instance methods --------------------------------------------
@@ -87,6 +70,6 @@ class CategoryPost extends \cmsgears\core\common\base\PageWidget {
 
 	// cmsgears\core\common\base\Widget
 
-	// CategoryPost --------------------------
+	// RelatedPost ---------------------------
 
 }
