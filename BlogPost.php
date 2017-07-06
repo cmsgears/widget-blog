@@ -28,9 +28,9 @@ class BlogPost extends PageWidget {
 
 	public $options			= [ 'class' => 'blog blog-banner' ];
 
-	public $wrapperOptions	= [ 'class' => 'wrap-posts row max-cols-50' ];
+	public $wrapperOptions	= [ 'class' => 'blog-posts row max-cols-50' ];
 
-	public $singleOptions	= [ 'class' => 'post col col12x6 row' ];
+	public $singleOptions	= [ 'class' => 'blog-post col col12x6 row' ];
 
 	public $template		= 'banner';
 
