@@ -2,7 +2,7 @@
 namespace cmsgears\widgets\blog;
 
 // Yii Imports
-use \Yii;
+use Yii;
 
 // CMG Imports
 use cmsgears\cms\common\config\CmsGlobal;
@@ -63,6 +63,7 @@ class CategoryPost extends \cmsgears\core\common\base\PageWidget {
 			$slug				= $this->category->slug;
 
 			$this->dataProvider	= $modelService->getPageForSearch([
+										'public' => true,
 										'category' => $this->category,
 										'limit' => $this->limit,
 										'route' => "$this->route/$slug",
