@@ -5,7 +5,6 @@ namespace cmsgears\widgets\blog;
 use \Yii;
 
 // CMG Imports
-use cmsgears\core\common\config\CoreGlobal;
 use cmsgears\cms\common\config\CmsGlobal;
 
 /**
@@ -38,7 +37,7 @@ class TagPost extends \cmsgears\core\common\base\PageWidget {
 	public $tag				= null;
 
 	public $modelService	= 'postService';
-	public $route			= 'tag';
+	public $route			= "tag";
 
 	// Protected --------------
 
@@ -66,7 +65,8 @@ class TagPost extends \cmsgears\core\common\base\PageWidget {
 			$this->dataProvider	= $modelService->getPageForSearch([
 										'tag' => $this->tag,
 										'limit' => $this->limit,
-										'route' => "$this->route/$slug"
+										'route' => "$this->route/$slug",
+										'parentType' => $this->type
 									]);
 
 			$this->modelPage	= $this->dataProvider->getModels();
