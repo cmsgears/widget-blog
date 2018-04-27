@@ -62,6 +62,8 @@ class BlogPost extends PageWidget {
 
 		$this->postService	= Yii::$app->factory->get( 'postService' );
 
+		$modelTable = $this->postService->getModelTable();
+
 		// Find models for search, category and tag page
 		if( $this->pagination ) {
 
@@ -72,7 +74,7 @@ class BlogPost extends PageWidget {
 					$this->dataProvider	= $this->postService->getPageForSearch([
 												'route' => 'blog/search', 'public' => true, 'excludeMainSite' => true,
 												'searchContent' => true, 'searchCategory' => true, 'searchTag' => true,
-												'limit' => $this->limit,'conditions' => [ 'type' => 'blog' ]
+												'limit' => $this->limit,'conditions' => [ "$modelTable.type" => 'blog' ]
 											]);
 				}
 				else if( $this->siteModels ) {
@@ -80,7 +82,7 @@ class BlogPost extends PageWidget {
 					$this->dataProvider	= $this->postService->getPageForSearch([
 												'route' => 'blog/search', 'public' => true, 'siteOnly' => true,
 												'searchContent' => true, 'searchCategory' => true, 'searchTag' => true,
-												'limit' => $this->limit,'conditions' => [ 'type' => 'blog' ]
+												'limit' => $this->limit,'conditions' => [ "$modelTable.type" => 'blog' ]
 											]);
 				}
 				else {
@@ -88,7 +90,7 @@ class BlogPost extends PageWidget {
 					$this->dataProvider	= $this->postService->getPageForSearch([
 												'route' => 'blog/search', 'public' => true,
 												'searchContent' => true, 'searchCategory' => true, 'searchTag' => true,
-												'limit' => $this->limit,'conditions' => [ 'type' => 'blog' ]
+												'limit' => $this->limit,'conditions' => [ "$modelTable.type" => 'blog' ]
 											]);
 				}
 			}
@@ -105,7 +107,7 @@ class BlogPost extends PageWidget {
 
 					$this->modelPage	= $this->postService->getModels([
 												'advanced' => true, 'public' => true,
-												'limit' => $this->limit, 'sort' => [ 'id' => SORT_DESC ],'conditions' => [ 'type' => 'blog' ]
+												'limit' => $this->limit, 'sort' => [ 'id' => SORT_DESC ],'conditions' => [ "$modelTable.type" => 'blog' ]
 											]);
 
 					break;
@@ -118,7 +120,7 @@ class BlogPost extends PageWidget {
 
 					$this->modelPage	= $this->postService->getSimilar([
 												'tags' => $tagIds, 'categories' => $categoryIds,
-												[ 'limit' => $this->limit ],'conditions' => [ 'type' => 'blog' ]
+												[ 'limit' => $this->limit ],'conditions' => [ "$modelTable.type" => 'blog' ]
 											]);
 
 					break;
