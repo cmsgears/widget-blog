@@ -5,6 +5,8 @@ namespace cmsgears\widgets\blog;
 use Yii;
 
 // CMG Imports
+use cmsgears\cms\common\config\CmsGlobal;
+
 use cmsgears\core\common\base\PageWidget;
 
 /**
@@ -26,27 +28,29 @@ class BlogPost extends PageWidget {
 
 	// Public -----------------
 
-	public $options			= [ 'class' => 'blog blog-banner' ];
+	public $options = [ 'class' => 'blog blog-banner' ];
 
-	public $wrapperOptions	= [ 'class' => 'blog-posts row max-cols-50' ];
+	public $wrapperOptions = [ 'class' => 'blog-posts row max-cols-50' ];
 
-	public $singleOptions	= [ 'class' => 'blog-post col col12x6 row' ];
+	public $singleOptions = [ 'class' => 'blog-post col col12x6 row' ];
 
-	public $template		= 'banner';
+	public $template = 'banner';
 
 	// Path for all posts
-	public $allPath			= 'blog';
+	public $allPath = 'blog';
 
 	// Path for single post
-	public $singlePath		= 'blog';
+	public $singlePath = 'blog';
 
 	// Widget - Required for widgets and works only if pagination is false. The possible values can be - popular, recent, similar, related
-	public $widget			= 'recent';
+	public $widget = 'recent';
 
-	public $excludeParams	= [ 'slug' ];
+	public $excludeParams = [ 'slug' ];
 
 	// Model in action required for widgets on single pages
 	public $model;
+
+	public $defaultBanner = false;
 
 	// Protected --------------
 
@@ -60,7 +64,7 @@ class BlogPost extends PageWidget {
 
 	public function initModels( $config = [] ) {
 
-		$this->postService	= Yii::$app->factory->get( 'postService' );
+		$this->postService = Yii::$app->factory->get( 'postService' );
 
 		$modelTable = $this->postService->getModelTable();
 
@@ -72,30 +76,30 @@ class BlogPost extends PageWidget {
 				if( $this->excludeMain ) {
 
 					$this->dataProvider	= $this->postService->getPageForSearch([
-												'route' => 'blog/search', 'public' => true, 'excludeMainSite' => true,
-												'searchContent' => true, 'searchCategory' => true, 'searchTag' => true,
-												'limit' => $this->limit,'conditions' => [ "$modelTable.type" => 'blog' ]
-											]);
+						'route' => 'blog/search', 'public' => true, 'excludeMainSite' => true,
+						'searchContent' => true, 'searchCategory' => true, 'searchTag' => true,
+						'limit' => $this->limit,'conditions' => [ "$modelTable.type" => CmsGlobal::TYPE_POST ]
+					]);
 				}
 				else if( $this->siteModels ) {
 
 					$this->dataProvider	= $this->postService->getPageForSearch([
-												'route' => 'blog/search', 'public' => true, 'siteOnly' => true,
-												'searchContent' => true, 'searchCategory' => true, 'searchTag' => true,
-												'limit' => $this->limit,'conditions' => [ "$modelTable.type" => 'blog' ]
-											]);
+						'route' => 'blog/search', 'public' => true, 'siteOnly' => true,
+						'searchContent' => true, 'searchCategory' => true, 'searchTag' => true,
+						'limit' => $this->limit,'conditions' => [ "$modelTable.type" => CmsGlobal::TYPE_POST ]
+					]);
 				}
 				else {
 
 					$this->dataProvider	= $this->postService->getPageForSearch([
-												'route' => 'blog/search', 'public' => true,
-												'searchContent' => true, 'searchCategory' => true, 'searchTag' => true,
-												'limit' => $this->limit,'conditions' => [ "$modelTable.type" => 'blog' ]
-											]);
+						'route' => 'blog/search', 'public' => true,
+						'searchContent' => true, 'searchCategory' => true, 'searchTag' => true,
+						'limit' => $this->limit,'conditions' => [ "$modelTable.type" => CmsGlobal::TYPE_POST ]
+					]);
 				}
 			}
 
-			$this->modelPage	= $this->dataProvider->getModels();
+			$this->modelPage = $this->dataProvider->getModels();
 		}
 		// Find models for popular, recent, similar, related widgets
 		else {
@@ -105,23 +109,24 @@ class BlogPost extends PageWidget {
 				// Recent posts
 				case 'recent': {
 
-					$this->modelPage	= $this->postService->getModels([
-												'advanced' => true, 'public' => true,
-												'limit' => $this->limit, 'sort' => [ 'id' => SORT_DESC ],'conditions' => [ "$modelTable.type" => 'blog' ]
-											]);
+					$this->modelPage = $this->postService->getModels([
+						'advanced' => true, 'public' => true,
+						'limit' => $this->limit, 'sort' => [ 'id' => SORT_DESC ],'conditions' => [ "$modelTable.type" => CmsGlobal::TYPE_POST ]
+					]);
 
 					break;
 				}
 				// Similar posts
 				case 'similar': {
 
-					$categoryIds		= $this->model->getCategoryIdList( true );
-					$tagIds				= $this->model->getTagIdList( true );
+					$categoryIds = $this->model->getCategoryIdList( true );
 
-					$this->modelPage	= $this->postService->getSimilar([
-												'tags' => $tagIds, 'categories' => $categoryIds,
-												[ 'limit' => $this->limit ],'conditions' => [ "$modelTable.type" => 'blog' ]
-											]);
+					$tagIds = $this->model->getTagIdList( true );
+
+					$this->modelPage = $this->postService->getSimilar([
+						'tags' => $tagIds, 'categories' => $categoryIds,
+						[ 'limit' => $this->limit ], 'conditions' => [ "$modelTable.type" => CmsGlobal::TYPE_POST ]
+					]);
 
 					break;
 				}
