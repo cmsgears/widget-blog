@@ -13,7 +13,7 @@ use cmsgears\cms\frontend\services\entities\PostService;
 /**
  * It shows the most recent posts published on site for a specific author. Author must provide a valid username while doing registration or update it later.
  */
-class AuthorPost extends \cmsgears\core\common\base\PageWidget {
+class AuthorPostWidget extends \cmsgears\core\common\base\PageWidget {
 
 	// Variables ---------------------------------------------------
 

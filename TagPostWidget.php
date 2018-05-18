@@ -2,15 +2,15 @@
 namespace cmsgears\widgets\blog;
 
 // Yii Imports
-use Yii;
+use \Yii;
 
 // CMG Imports
 use cmsgears\cms\common\config\CmsGlobal;
 
 /**
- * It shows the most recent posts published on site for a specific category.
+ * It shows the most recent posts published on site for a specific tag.
  */
-class CategoryPost extends \cmsgears\core\common\base\PageWidget {
+class TagPostWidget extends \cmsgears\core\common\base\PageWidget {
 
 	// Variables ---------------------------------------------------
 
@@ -34,10 +34,10 @@ class CategoryPost extends \cmsgears\core\common\base\PageWidget {
 
 	public $slug			= null;
 	public $type			= CmsGlobal::TYPE_POST;
-	public $category		= null;
+	public $tag				= null;
 
 	public $modelService	= 'postService';
-	public $route			= 'category';
+	public $route			= "tag";
 
 	// Protected --------------
 
@@ -49,22 +49,21 @@ class CategoryPost extends \cmsgears\core\common\base\PageWidget {
 
 	public function initModels( $config = [] ) {
 
-		// Get category if not set
+		// Get tag if not set
 		if( isset( $this->slug ) && isset( $this->type ) ) {
 
-			$categoryService	= Yii::$app->factory->get( 'categoryService' );
-			$this->category		= $categoryService->getBySlugType( $this->slug, $this->type );
+			$tagService		= Yii::$app->factory->get( 'tagService' );
+			$this->tag		= $tagService->getBySlugType( $this->slug, $this->type );
 		}
 
-		if( isset( $this->category ) ) {
+		if( isset( $this->tag ) ) {
 
 			$modelService		= Yii::$app->factory->get( $this->modelService );
 
-			$slug				= $this->category->slug;
+			$slug				= $this->tag->slug;
 
 			$this->dataProvider	= $modelService->getPageForSearch([
-										'public' => true,
-										'category' => $this->category,
+										'tag' => $this->tag,
 										'limit' => $this->limit,
 										'route' => "$this->route/$slug",
 										'parentType' => $this->type
@@ -88,6 +87,6 @@ class CategoryPost extends \cmsgears\core\common\base\PageWidget {
 
 	// cmsgears\core\common\base\Widget
 
-	// CategoryPost --------------------------
+	// TagPost -------------------------------
 
 }

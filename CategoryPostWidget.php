@@ -2,15 +2,15 @@
 namespace cmsgears\widgets\blog;
 
 // Yii Imports
-use \Yii;
+use Yii;
 
 // CMG Imports
 use cmsgears\cms\common\config\CmsGlobal;
 
 /**
- * It shows the most recent posts published on site for a specific tag.
+ * It shows the most recent posts published on site for a specific category.
  */
-class TagPost extends \cmsgears\core\common\base\PageWidget {
+class CategoryPostWidget extends \cmsgears\core\common\base\PageWidget {
 
 	// Variables ---------------------------------------------------
 
@@ -34,10 +34,10 @@ class TagPost extends \cmsgears\core\common\base\PageWidget {
 
 	public $slug			= null;
 	public $type			= CmsGlobal::TYPE_POST;
-	public $tag				= null;
+	public $category		= null;
 
 	public $modelService	= 'postService';
-	public $route			= "tag";
+	public $route			= 'category';
 
 	// Protected --------------
 
@@ -49,21 +49,22 @@ class TagPost extends \cmsgears\core\common\base\PageWidget {
 
 	public function initModels( $config = [] ) {
 
-		// Get tag if not set
+		// Get category if not set
 		if( isset( $this->slug ) && isset( $this->type ) ) {
 
-			$tagService		= Yii::$app->factory->get( 'tagService' );
-			$this->tag		= $tagService->getBySlugType( $this->slug, $this->type );
+			$categoryService	= Yii::$app->factory->get( 'categoryService' );
+			$this->category		= $categoryService->getBySlugType( $this->slug, $this->type );
 		}
 
-		if( isset( $this->tag ) ) {
+		if( isset( $this->category ) ) {
 
 			$modelService		= Yii::$app->factory->get( $this->modelService );
 
-			$slug				= $this->tag->slug;
+			$slug				= $this->category->slug;
 
 			$this->dataProvider	= $modelService->getPageForSearch([
-										'tag' => $this->tag,
+										'public' => true,
+										'category' => $this->category,
 										'limit' => $this->limit,
 										'route' => "$this->route/$slug",
 										'parentType' => $this->type
@@ -87,6 +88,6 @@ class TagPost extends \cmsgears\core\common\base\PageWidget {
 
 	// cmsgears\core\common\base\Widget
 
-	// TagPost -------------------------------
+	// CategoryPost --------------------------
 
 }

@@ -12,7 +12,7 @@ use cmsgears\cms\frontend\services\entities\PostService;
 /**
  * It shows the posts arranged in year and month.
  */
-class ArchivePost extends \cmsgears\core\common\base\PageWidget {
+class ArchivePostWidget extends \cmsgears\core\common\base\PageWidget {
 
 	// Variables ---------------------------------------------------
 

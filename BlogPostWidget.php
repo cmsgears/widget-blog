@@ -12,7 +12,7 @@ use cmsgears\core\common\base\PageWidget;
 /**
  * It shows the most recent posts published on site.
  */
-class BlogPost extends PageWidget {
+class BlogPostWidget extends PageWidget {
 
 	// Variables ---------------------------------------------------
 

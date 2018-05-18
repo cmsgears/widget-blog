@@ -10,7 +10,7 @@ use cmsgears\cms\common\config\CmsGlobal;
 /**
  * It shows the related posts.
  */
-class RelatedPost extends \cmsgears\core\common\base\PageWidget {
+class RelatedPostWidget extends \cmsgears\core\common\base\PageWidget {
 
 	// Variables ---------------------------------------------------
 
