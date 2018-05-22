@@ -1,6 +1,5 @@
 <?php
 // Yii Imports
-use yii\helpers\Html;
 use yii\helpers\Url;
 
 // CMG Imports
@@ -12,7 +11,7 @@ $content		= $model->modelContent;
 $banner			= $widget->defaultBanner ? SiteProperties::getInstance()->getDefaultBanner() : null;
 $bannerUrl		= CodeGenUtil::getMediumUrl( $content->banner, [ 'image' => $banner ] );
 
-$modelUrl		= "$widget->singlePath/$model->slug";
+$modelUrl		= isset( $widget->singlePath ) ? "$widget->singlePath/$model->slug" : Url::toRoute( [ "/$model->slug" ], true );
 ?>
 
 <a href="<?= $modelUrl ?>" class="blog-post">

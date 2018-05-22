@@ -1,4 +1,12 @@
 <?php
+/**
+ * This file is part of CMSGears Framework. Please view License file distributed
+ * with the source code for license details.
+ *
+ * @link https://www.cmsgears.org/
+ * @copyright Copyright (c) 2015 VulpineCode Technologies Pvt. Ltd.
+ */
+
 namespace cmsgears\widgets\blog;
 
 // Yii Imports
@@ -7,10 +15,14 @@ use Yii;
 // CMG Imports
 use cmsgears\cms\common\config\CmsGlobal;
 
+use cmsgears\widgets\blog\base\PageWidget;
+
 /**
- * It shows the related posts.
+ * PostWidget shows the most recent posts published on site.
+ *
+ * @since 1.0.0
  */
-class RelatedPostWidget extends \cmsgears\core\common\base\PageWidget {
+class PostWidget extends PageWidget {
 
 	// Variables ---------------------------------------------------
 
@@ -26,19 +38,19 @@ class RelatedPostWidget extends \cmsgears\core\common\base\PageWidget {
 
 	// Public -----------------
 
-	// Path for all posts
-	public $allPath			= 'blog';
+	public $route = 'blog/search';
 
-	// Path for single post
-	public $singlePath		= 'blog';
+	public $allPath = 'blog';
 
-	public $type			= CmsGlobal::TYPE_POST;
-
-	public $modelService	= 'postService';
-
-	public $model			= null;
+	public $singlePath = 'blog';
 
 	// Protected --------------
+
+	protected $type = CmsGlobal::TYPE_POST;
+
+	protected $searchContent	= true;
+	protected $searchCategory	= true;
+	protected $searchtag		= true;
 
 	// Private ----------------
 
@@ -46,14 +58,11 @@ class RelatedPostWidget extends \cmsgears\core\common\base\PageWidget {
 
 	// Constructor and Initialisation ------------------------------
 
-	public function initModels( $config = [] ) {
+	public function init() {
 
-		$categoryIds		= $this->model->getCategoryIdList( true );
-		$tagIds				= $this->model->getTagIdList( true );
+		$this->modelService = Yii::$app->factory->get( 'postService' );
 
-		$this->dataProvider	= Yii::$app->factory->get( 'postService' )->getPageForSimilar( [ 'categories' => $categoryIds, 'tags' => $tagIds, 'modelId' => $this->model->id ] );
-
-		$this->modelPage	= $this->dataProvider->getModels();
+		parent::init();
 	}
 
 	// Instance methods --------------------------------------------
@@ -68,8 +77,6 @@ class RelatedPostWidget extends \cmsgears\core\common\base\PageWidget {
 
 	// CMG parent classes --------------------
 
-	// cmsgears\core\common\base\Widget
-
-	// RelatedPost ---------------------------
+	// PostWidget ----------------------------
 
 }
