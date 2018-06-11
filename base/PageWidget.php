@@ -131,7 +131,7 @@ abstract class PageWidget extends BasePageWidget {
 					$this->initCategoryModels();
 				}
 				// Tag
-				if( isset( $this->tag ) ) {
+				else if( isset( $this->tag ) ) {
 
 					$this->initTagModels();
 				}
