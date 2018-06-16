@@ -9,6 +9,9 @@
 
 namespace cmsgears\widgets\blog\base;
 
+// Yii Imports
+use yii\data\Sort;
+
 // CMG Imports
 use cmsgears\core\common\base\PageWidget as BasePageWidget;
 
@@ -287,13 +290,27 @@ abstract class PageWidget extends BasePageWidget {
 
 		$modelTable = $this->modelService->getModelTable();
 
+		$sort = new Sort([
+			'attributes' => [
+				'id' => [
+					'asc' => [ "$modelTable.id" => SORT_ASC ],
+					'desc' => [ "$modelTable.id" => SORT_DESC ],
+					'default' => SORT_DESC,
+					'label' => 'Id'
+				]
+			],
+			'defaultOrder' => [
+				'id' => SORT_DESC
+			]
+		]);
+
 		// Child Sites Only
 		if( $this->excludeMain ) {
 
 			$this->dataProvider	= $this->modelService->getPageForSearch([
 				'route' => $this->route, 'public' => true, 'excludeMainSite' => true,
 				'searchContent' => $this->searchContent, 'searchCategory' => $this->searchCategory, 'searchTag' => $this->searchtag,
-				'limit' => $this->limit, 'conditions' => [ "$modelTable.type" => $this->type ]
+				'limit' => $this->limit, 'sort' => $sort, 'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
 		}
 		// Active Site Only
@@ -302,7 +319,7 @@ abstract class PageWidget extends BasePageWidget {
 			$this->dataProvider	= $this->modelService->getPageForSearch([
 				'route' => $this->route, 'public' => true, 'siteOnly' => true,
 				'searchContent' => $this->searchContent, 'searchCategory' => $this->searchCategory, 'searchTag' => $this->searchtag,
-				'limit' => $this->limit, 'conditions' => [ "$modelTable.type" => $this->type ]
+				'limit' => $this->limit, 'sort' => $sort, 'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
 		}
 		// All Sites
@@ -311,7 +328,7 @@ abstract class PageWidget extends BasePageWidget {
 			$this->dataProvider	= $this->modelService->getPageForSearch([
 				'route' => $this->route, 'public' => true, 'ignoreSite' => true,
 				'searchContent' => $this->searchContent, 'searchCategory' => $this->searchCategory, 'searchTag' => $this->searchtag,
-				'limit' => $this->limit, 'conditions' => [ "$modelTable.type" => $this->type ]
+				'limit' => $this->limit, 'sort' => $sort, 'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
 		}
 	}
