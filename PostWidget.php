@@ -38,11 +38,9 @@ class PostWidget extends PageWidget {
 
 	// Public -----------------
 
-	public $route = 'blog/search';
-
-	public $allPath = 'blog';
-
-	public $singlePath = 'blog';
+	public $route		= 'blog/search';
+	public $allPath		= 'blog';
+	public $singlePath	= 'blog';
 
 	// Protected --------------
 

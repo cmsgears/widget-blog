@@ -36,11 +36,9 @@ abstract class PageWidget extends BasePageWidget {
 
 	// Public -----------------
 
-	public $options = [ 'class' => 'blog blog-banner' ];
-
-	public $wrapperOptions = [ 'class' => 'blog-posts row max-cols-50' ];
-
-	public $singleOptions = [ 'class' => 'blog-post col col12x6 row' ];
+	public $options			= [ 'class' => 'widget widget-page' ];
+	public $wrapperOptions	= [ 'class' => 'box-page-wrap row max-cols-50' ];
+	public $singleOptions	= [ 'class' => 'box box-page box-info col col12x6 row' ];
 
 	public $template = 'banner';
 
@@ -67,6 +65,9 @@ abstract class PageWidget extends BasePageWidget {
 	/**
 	 * Required on single pages with [[$pagination]] set to false and [[$widget]] set to popular, recent, related or similar.
 	 *
+	 * Optional - popular, recent to exclude from end results
+	 * Required - related or similar
+	 *
 	 * @var string
 	 */
 	public $model;
@@ -80,14 +81,17 @@ abstract class PageWidget extends BasePageWidget {
 
 	// Author
 	public $author;
+	public $authorParam = false;
 
 	// Category
 	public $category;
+	public $categoryParam = false;
 	public $categorySlug;
 	public $categoryType;
 
 	// Tag
 	public $tag;
+	public $tagParam = false;
 	public $tagSlug;
 	public $tagType;
 
@@ -108,6 +112,27 @@ abstract class PageWidget extends BasePageWidget {
 	// Constructor and Initialisation ------------------------------
 
 	public function initModels( $config = [] ) {
+
+		// Detect Category - Used only by dynamic calls
+		if( $this->categoryParam ) {
+
+			$this->category = $this->model;
+			$this->model	= null;
+		}
+
+		// Detect Tag - Used only by dynamic calls
+		if( $this->tagParam ) {
+
+			$this->tag		= $this->model;
+			$this->model	= null;
+		}
+
+		// Detect Author - Used only by dynamic calls
+		if( $this->authorParam ) {
+
+			$this->author	= $this->model;
+			$this->model	= null;
+		}
 
 		// Find models for search page
 		if( $this->pagination ) {
