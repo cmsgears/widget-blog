@@ -262,6 +262,16 @@ abstract class PageWidget extends BasePageWidget {
 				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
 		}
+		// Specific Site Only
+		else if( isset( $this->siteId ) ) {
+
+			$this->dataProvider	= $this->modelService->getPageForSearch([
+				'limit' => $this->limit, 'public' => true, 'siteOnly' => true, 'siteId' => $this->siteId,
+				'searchContent' => $this->searchContent, 'category' => $this->category,
+				'route' => "$this->route/{$this->category->slug}",
+				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type ]
+			]);
+		}
 		// All Sites
 		else {
 
@@ -294,6 +304,16 @@ abstract class PageWidget extends BasePageWidget {
 
 			$this->dataProvider	= $this->modelService->getPageForSearch([
 				'limit' => $this->limit, 'public' => true, 'siteOnly' => true,
+				'searchContent' => $this->searchContent, 'tag' => $this->tag,
+				'route' => "$this->route/{$this->tag->slug}",
+				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type ]
+			]);
+		}
+		// Specific Site Only
+		else if( isset( $this->siteId ) ) {
+
+			$this->dataProvider	= $this->modelService->getPageForSearch([
+				'limit' => $this->limit, 'public' => true, 'siteOnly' => true, 'siteId' => $this->siteId,
 				'searchContent' => $this->searchContent, 'tag' => $this->tag,
 				'route' => "$this->route/{$this->tag->slug}",
 				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type ]
@@ -347,6 +367,15 @@ abstract class PageWidget extends BasePageWidget {
 				'limit' => $this->limit, 'sort' => $sort, 'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
 		}
+		// Specific Site Only
+		else if( isset( $this->siteId ) ) {
+
+			$this->dataProvider	= $this->modelService->getPageForSearch([
+				'route' => $this->route, 'public' => true, 'siteOnly' => true, 'siteId' => $this->siteId,
+				'searchContent' => $this->searchContent, 'searchCategory' => $this->searchCategory, 'searchTag' => $this->searchtag,
+				'limit' => $this->limit, 'sort' => $sort, 'conditions' => [ "$modelTable.type" => $this->type ]
+			]);
+		}
 		// All Sites
 		else {
 
@@ -377,6 +406,15 @@ abstract class PageWidget extends BasePageWidget {
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
 				'sort' => [ 'id' => SORT_DESC ], 'siteOnly' => true,
+				'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.featured" => true ]
+			]);
+		}
+		// Specific Site Only
+		else if( isset( $this->siteId ) ) {
+
+			$this->modelPage = $this->modelService->getModels([
+				'advanced' => true, 'public' => true, 'limit' => $this->limit,
+				'sort' => [ 'id' => SORT_DESC ], 'siteOnly' => true, 'siteId' => $this->siteId,
 				'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.featured" => true ]
 			]);
 		}
@@ -413,6 +451,15 @@ abstract class PageWidget extends BasePageWidget {
 				'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
 		}
+		// Specific Site Only
+		else if( isset( $this->siteId ) ) {
+
+			$this->modelPage = $this->modelService->getModels([
+				'advanced' => true, 'public' => true, 'limit' => $this->limit,
+				'sort' => [ 'id' => SORT_DESC ], 'siteOnly' => true, 'siteId' => $this->siteId,
+				'conditions' => [ "$modelTable.type" => $this->type ]
+			]);
+		}
 		// All Sites
 		else {
 
@@ -443,6 +490,15 @@ abstract class PageWidget extends BasePageWidget {
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
 				'sort' => [ 'id' => SORT_DESC ], 'siteOnly' => true,
+				'conditions' => [ "$modelTable.type" => $this->type ]
+			]);
+		}
+		// Specific Site Only
+		else if( isset( $this->siteId ) ) {
+
+			$this->modelPage = $this->modelService->getModels([
+				'advanced' => true, 'public' => true, 'limit' => $this->limit,
+				'sort' => [ 'id' => SORT_DESC ], 'siteOnly' => true, 'siteId' => $this->siteId,
 				'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
 		}
@@ -479,6 +535,15 @@ abstract class PageWidget extends BasePageWidget {
 				'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $author->id ]
 			]);
 		}
+		// Specific Site Only
+		else if( isset( $this->siteId ) ) {
+
+			$this->modelPage = $this->modelService->getModels([
+				'advanced' => true, 'public' => true, 'limit' => $this->limit,
+				'sort' => [ 'id' => SORT_DESC ], 'siteOnly' => true, 'siteId' => $this->siteId,
+				'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $author->id ]
+			]);
+		}
 		// All Sites
 		else {
 
@@ -511,6 +576,15 @@ abstract class PageWidget extends BasePageWidget {
 			$this->modelPage = $this->modelService->getSimilar([
 				'modelId' => $this->model->id, 'tags' => $tagIds, 'categories' => $categoryIds,
 				'limit' => $this->limit, 'siteOnly' => true,
+				'conditions' => [ "$modelTable.type" => $this->type ]
+			]);
+		}
+		// Specific Site Only
+		else if( isset( $this->siteId ) ) {
+
+			$this->modelPage = $this->modelService->getSimilar([
+				'modelId' => $this->model->id, 'tags' => $tagIds, 'categories' => $categoryIds,
+				'limit' => $this->limit, 'siteOnly' => true, 'siteId' => $this->siteId,
 				'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
 		}
