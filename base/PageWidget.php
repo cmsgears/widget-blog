@@ -163,6 +163,11 @@ abstract class PageWidget extends BasePageWidget {
 
 					$this->initTagModels();
 				}
+				// Author
+				else if( isset( $this->author ) ) {
+
+					$this->initAuthorModels();
+				}
 				// Page
 				else {
 
@@ -327,6 +332,55 @@ abstract class PageWidget extends BasePageWidget {
 				'searchContent' => $this->searchContent, 'tag' => $this->tag,
 				'route' => "$this->route/{$this->tag->slug}",
 				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type ]
+			]);
+		}
+	}
+
+	protected function initAuthorModels() {
+
+		$modelTable		= $this->modelService->getModelTable();
+		$this->route	= empty( $this->route ) ? 'tag' : $this->route;
+
+		$author = $this->author;
+
+		// Child Sites Only
+		if( $this->excludeMain ) {
+
+			$this->dataProvider	= $this->modelService->getPageForSearch([
+				'limit' => $this->limit, 'public' => true, 'excludeMainSite' => true,
+				'searchContent' => $this->searchContent,
+				'route' => "$this->route/{$author->username}",
+				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $author->id ]
+			]);
+		}
+		// Active Site Only
+		else if( $this->siteModels ) {
+
+			$this->dataProvider	= $this->modelService->getPageForSearch([
+				'limit' => $this->limit, 'public' => true, 'siteOnly' => true,
+				'searchContent' => $this->searchContent,
+				'route' => "$this->route/{$author->username}",
+				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $author->id ]
+			]);
+		}
+		// Specific Site Only
+		else if( isset( $this->siteId ) ) {
+
+			$this->dataProvider	= $this->modelService->getPageForSearch([
+				'limit' => $this->limit, 'public' => true, 'siteOnly' => true, 'siteId' => $this->siteId,
+				'searchContent' => $this->searchContent,
+				'route' => "$this->route/{$author->username}",
+				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $author->id ]
+			]);
+		}
+		// All Sites
+		else {
+
+			$this->dataProvider	= $this->modelService->getPageForSearch([
+				'limit' => $this->limit, 'public' => true, 'ignoreSite' => true,
+				'searchContent' => $this->searchContent,
+				'route' => "$this->route/{$author->username}",
+				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $author->id ]
 			]);
 		}
 	}
