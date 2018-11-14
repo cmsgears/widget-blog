@@ -245,7 +245,7 @@ abstract class PageWidget extends BasePageWidget {
 	protected function initCategoryModels() {
 
 		$modelTable		= $this->modelService->getModelTable();
-		$this->route	= empty( $this->route ) ? 'category' : $this->route;
+		$this->route	= empty( $this->route ) ? "category/{$this->category->slug}" : "$this->route/category/{$this->category->slug}";
 
 		// Child Sites Only
 		if( $this->excludeMain ) {
@@ -253,7 +253,7 @@ abstract class PageWidget extends BasePageWidget {
 			$this->dataProvider	= $this->modelService->getPageForSearch([
 				'limit' => $this->limit, 'public' => true, 'excludeMainSite' => true,
 				'searchContent' => $this->searchContent, 'category' => $this->category,
-				'route' => "$this->route/{$this->category->slug}",
+				'route' => $this->route,
 				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
 		}
@@ -263,7 +263,7 @@ abstract class PageWidget extends BasePageWidget {
 			$this->dataProvider	= $this->modelService->getPageForSearch([
 				'limit' => $this->limit, 'public' => true, 'siteOnly' => true,
 				'searchContent' => $this->searchContent, 'category' => $this->category,
-				'route' => "$this->route/{$this->category->slug}",
+				'route' => $this->route,
 				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
 		}
@@ -273,7 +273,7 @@ abstract class PageWidget extends BasePageWidget {
 			$this->dataProvider	= $this->modelService->getPageForSearch([
 				'limit' => $this->limit, 'public' => true, 'siteOnly' => true, 'siteId' => $this->siteId,
 				'searchContent' => $this->searchContent, 'category' => $this->category,
-				'route' => "$this->route/{$this->category->slug}",
+				'route' => $this->route,
 				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
 		}
@@ -283,7 +283,7 @@ abstract class PageWidget extends BasePageWidget {
 			$this->dataProvider	= $this->modelService->getPageForSearch([
 				'limit' => $this->limit, 'public' => true, 'ignoreSite' => true,
 				'searchContent' => $this->searchContent, 'category' => $this->category,
-				'route' => "$this->route/{$this->category->slug}",
+				'route' => $this->route,
 				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
 		}
@@ -292,7 +292,7 @@ abstract class PageWidget extends BasePageWidget {
 	protected function initTagModels() {
 
 		$modelTable		= $this->modelService->getModelTable();
-		$this->route	= empty( $this->route ) ? 'tag' : $this->route;
+		$this->route	= empty( $this->route ) ? "tag/{$this->tag->slug}" : "$this->route/tag/{$this->tag->slug}";
 
 		// Child Sites Only
 		if( $this->excludeMain ) {
@@ -300,7 +300,7 @@ abstract class PageWidget extends BasePageWidget {
 			$this->dataProvider	= $this->modelService->getPageForSearch([
 				'limit' => $this->limit, 'public' => true, 'excludeMainSite' => true,
 				'searchContent' => $this->searchContent, 'tag' => $this->tag,
-				'route' => "$this->route/{$this->tag->slug}",
+				'route' => $this->route,
 				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
 		}
@@ -310,7 +310,7 @@ abstract class PageWidget extends BasePageWidget {
 			$this->dataProvider	= $this->modelService->getPageForSearch([
 				'limit' => $this->limit, 'public' => true, 'siteOnly' => true,
 				'searchContent' => $this->searchContent, 'tag' => $this->tag,
-				'route' => "$this->route/{$this->tag->slug}",
+				'route' => $this->route,
 				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
 		}
@@ -320,7 +320,7 @@ abstract class PageWidget extends BasePageWidget {
 			$this->dataProvider	= $this->modelService->getPageForSearch([
 				'limit' => $this->limit, 'public' => true, 'siteOnly' => true, 'siteId' => $this->siteId,
 				'searchContent' => $this->searchContent, 'tag' => $this->tag,
-				'route' => "$this->route/{$this->tag->slug}",
+				'route' => $this->route,
 				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
 		}
@@ -330,7 +330,7 @@ abstract class PageWidget extends BasePageWidget {
 			$this->dataProvider	= $this->modelService->getPageForSearch([
 				'limit' => $this->limit, 'public' => true, 'ignoreSite' => true,
 				'searchContent' => $this->searchContent, 'tag' => $this->tag,
-				'route' => "$this->route/{$this->tag->slug}",
+				'route' => $this->route,
 				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
 		}
@@ -339,9 +339,7 @@ abstract class PageWidget extends BasePageWidget {
 	protected function initAuthorModels() {
 
 		$modelTable		= $this->modelService->getModelTable();
-		$this->route	= empty( $this->route ) ? 'tag' : $this->route;
-
-		$author = $this->author;
+		$this->route	= empty( $this->route ) ? "author/{$this->author->username}" : "$this->route/author/{$this->author->username}";
 
 		// Child Sites Only
 		if( $this->excludeMain ) {
@@ -349,8 +347,8 @@ abstract class PageWidget extends BasePageWidget {
 			$this->dataProvider	= $this->modelService->getPageForSearch([
 				'limit' => $this->limit, 'public' => true, 'excludeMainSite' => true,
 				'searchContent' => $this->searchContent,
-				'route' => "$this->route/{$author->username}",
-				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $author->id ]
+				'route' => $this->route,
+				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $this->author->id ]
 			]);
 		}
 		// Active Site Only
@@ -359,8 +357,8 @@ abstract class PageWidget extends BasePageWidget {
 			$this->dataProvider	= $this->modelService->getPageForSearch([
 				'limit' => $this->limit, 'public' => true, 'siteOnly' => true,
 				'searchContent' => $this->searchContent,
-				'route' => "$this->route/{$author->username}",
-				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $author->id ]
+				'route' => $this->route,
+				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $this->author->id ]
 			]);
 		}
 		// Specific Site Only
@@ -369,8 +367,8 @@ abstract class PageWidget extends BasePageWidget {
 			$this->dataProvider	= $this->modelService->getPageForSearch([
 				'limit' => $this->limit, 'public' => true, 'siteOnly' => true, 'siteId' => $this->siteId,
 				'searchContent' => $this->searchContent,
-				'route' => "$this->route/{$author->username}",
-				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $author->id ]
+				'route' => $this->route,
+				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $this->author->id ]
 			]);
 		}
 		// All Sites
@@ -379,8 +377,8 @@ abstract class PageWidget extends BasePageWidget {
 			$this->dataProvider	= $this->modelService->getPageForSearch([
 				'limit' => $this->limit, 'public' => true, 'ignoreSite' => true,
 				'searchContent' => $this->searchContent,
-				'route' => "$this->route/{$author->username}",
-				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $author->id ]
+				'route' => $this->route,
+				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $this->author->id ]
 			]);
 		}
 	}
