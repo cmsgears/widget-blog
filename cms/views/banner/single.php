@@ -1,6 +1,5 @@
 <?php
 // Yii Imports
-use yii\helpers\Html;
 use yii\helpers\Url;
 
 // CMG Imports
@@ -18,7 +17,7 @@ $content		= $model->modelContent;
 $banner			= SiteProperties::getInstance()->getDefaultBanner();
 $bannerUrl		= CodeGenUtil::getFileUrl( $content->banner, [ 'image' => $banner ] );
 
-$modelUrl		= "$widget->singlePath/$model->slug";
+$modelUrl		= isset( $widget->singlePath ) ? "$widget->singlePath/$model->slug" : Url::toRoute( [ "/$model->slug" ], true );
 ?>
 
 <div class="post-banner" style="<?php if( strlen( $bannerUrl) > 0 ) echo "background-image: url( $bannerUrl )"; ?>">
