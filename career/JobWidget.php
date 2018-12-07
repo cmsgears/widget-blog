@@ -7,20 +7,20 @@
  * @copyright Copyright (c) 2015 VulpineCode Technologies Pvt. Ltd.
  */
 
-namespace cmsgears\widgets\club\cms;
+namespace cmsgears\widgets\club\career;
 
 // Yii Imports
 use Yii;
 
 // CMG Imports
-use cmsgears\cms\common\config\CmsGlobal;
+use cmsgears\career\common\config\CareerGlobal;
 
 /**
- * PostWidget shows the most recent posts published on site.
+ * JobWidget shows the most recent jobs published on site.
  *
  * @since 1.0.0
  */
-class PostWidget extends \cmsgears\widgets\club\base\PageWidget {
+class JobWidget extends \cmsgears\widgets\club\base\PageWidget {
 
 	// Variables ---------------------------------------------------
 
@@ -36,17 +36,17 @@ class PostWidget extends \cmsgears\widgets\club\base\PageWidget {
 
 	// Public -----------------
 
-	public $route		= 'blog/search';
-	public $allPath		= 'blog';
-	public $singlePath	= 'blog';
+	public $route = 'job/search';
+
+	public $allPath = 'job';
+
+	public $singlePath = 'job';
 
 	// Protected --------------
 
-	protected $type = CmsGlobal::TYPE_POST;
+	protected $type = CareerGlobal::TYPE_JOB;
 
-	protected $searchContent	= true;
-	protected $searchCategory	= true;
-	protected $searchtag		= true;
+	protected $searchContent = true;
 
 	// Private ----------------
 
@@ -56,7 +56,7 @@ class PostWidget extends \cmsgears\widgets\club\base\PageWidget {
 
 	public function init() {
 
-		$this->modelService = Yii::$app->factory->get( 'postService' );
+		$this->modelService = Yii::$app->factory->get( 'jobService' );
 
 		parent::init();
 	}
@@ -73,6 +73,6 @@ class PostWidget extends \cmsgears\widgets\club\base\PageWidget {
 
 	// CMG parent classes --------------------
 
-	// PostWidget ----------------------------
+	// JobWidget -----------------------------
 
 }

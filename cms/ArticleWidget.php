@@ -15,14 +15,12 @@ use Yii;
 // CMG Imports
 use cmsgears\cms\common\config\CmsGlobal;
 
-use cmsgears\widgets\blog\base\PageWidget;
-
 /**
  * ArticleWidget shows the most recent articles published on site.
  *
  * @since 1.0.0
  */
-class ArticleWidget extends PageWidget {
+class ArticleWidget extends \cmsgears\widgets\club\base\PageWidget {
 
 	// Variables ---------------------------------------------------
 

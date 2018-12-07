@@ -7,20 +7,20 @@
  * @copyright Copyright (c) 2015 VulpineCode Technologies Pvt. Ltd.
  */
 
-namespace cmsgears\widgets\club\cms;
+namespace cmsgears\widgets\club\career;
 
 // Yii Imports
 use Yii;
 
 // CMG Imports
-use cmsgears\cms\common\config\CmsGlobal;
+use cmsgears\career\common\config\CareerGlobal;
 
 /**
- * PostWidget shows the most recent posts published on site.
+ * InternshipWidget shows the most recent internships published on site.
  *
  * @since 1.0.0
  */
-class PostWidget extends \cmsgears\widgets\club\base\PageWidget {
+class InternshipWidget extends \cmsgears\widgets\club\base\PageWidget {
 
 	// Variables ---------------------------------------------------
 
@@ -36,17 +36,17 @@ class PostWidget extends \cmsgears\widgets\club\base\PageWidget {
 
 	// Public -----------------
 
-	public $route		= 'blog/search';
-	public $allPath		= 'blog';
-	public $singlePath	= 'blog';
+	public $route = 'internship/search';
+
+	public $allPath = 'internship';
+
+	public $singlePath = 'internship';
 
 	// Protected --------------
 
-	protected $type = CmsGlobal::TYPE_POST;
+	protected $type = CareerGlobal::TYPE_INTERNSHIP;
 
-	protected $searchContent	= true;
-	protected $searchCategory	= true;
-	protected $searchtag		= true;
+	protected $searchContent = true;
 
 	// Private ----------------
 
@@ -56,7 +56,7 @@ class PostWidget extends \cmsgears\widgets\club\base\PageWidget {
 
 	public function init() {
 
-		$this->modelService = Yii::$app->factory->get( 'postService' );
+		$this->modelService = Yii::$app->factory->get( 'internshipService' );
 
 		parent::init();
 	}
@@ -73,6 +73,6 @@ class PostWidget extends \cmsgears\widgets\club\base\PageWidget {
 
 	// CMG parent classes --------------------
 
-	// PostWidget ----------------------------
+	// InternshipWidget ----------------------
 
 }
