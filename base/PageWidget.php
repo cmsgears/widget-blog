@@ -7,7 +7,7 @@
  * @copyright Copyright (c) 2015 VulpineCode Technologies Pvt. Ltd.
  */
 
-namespace cmsgears\widgets\blog\base;
+namespace cmsgears\widgets\club\base;
 
 // Yii Imports
 use yii\data\Sort;

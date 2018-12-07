@@ -7,7 +7,7 @@
  * @copyright Copyright (c) 2015 VulpineCode Technologies Pvt. Ltd.
  */
 
-namespace cmsgears\widgets\blog;
+namespace cmsgears\widgets\club\cms;
 
 // Yii Imports
 use Yii;

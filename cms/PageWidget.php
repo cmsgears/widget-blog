@@ -7,7 +7,7 @@
  * @copyright Copyright (c) 2015 VulpineCode Technologies Pvt. Ltd.
  */
 
-namespace cmsgears\widgets\blog;
+namespace cmsgears\widgets\club\cms;
 
 // Yii Imports
 use Yii;
@@ -15,14 +15,14 @@ use Yii;
 // CMG Imports
 use cmsgears\cms\common\config\CmsGlobal;
 
-use cmsgears\widgets\blog\base\PageWidget;
+use cmsgears\widgets\blog\base\PageWidget as BasePageWidget;
 
 /**
- * PostWidget shows the most recent posts published on site.
+ * PageWidget shows the most recent pages published on site.
  *
  * @since 1.0.0
  */
-class PostWidget extends PageWidget {
+class PageWidget extends BasePageWidget {
 
 	// Variables ---------------------------------------------------
 
@@ -38,17 +38,17 @@ class PostWidget extends PageWidget {
 
 	// Public -----------------
 
-	public $route		= 'blog/search';
-	public $allPath		= 'blog';
-	public $singlePath	= 'blog';
+	public $route = 'page/search';
+
+	public $allPath = 'page';
+
+	public $singlePath = null;
 
 	// Protected --------------
 
-	protected $type = CmsGlobal::TYPE_POST;
+	protected $type = CmsGlobal::TYPE_PAGE;
 
-	protected $searchContent	= true;
-	protected $searchCategory	= true;
-	protected $searchtag		= true;
+	protected $searchContent = true;
 
 	// Private ----------------
 
@@ -58,7 +58,7 @@ class PostWidget extends PageWidget {
 
 	public function init() {
 
-		$this->modelService = Yii::$app->factory->get( 'postService' );
+		$this->modelService = Yii::$app->factory->get( 'pageService' );
 
 		parent::init();
 	}
@@ -75,6 +75,6 @@ class PostWidget extends PageWidget {
 
 	// CMG parent classes --------------------
 
-	// PostWidget ----------------------------
+	// PageWidget ----------------------------
 
 }
