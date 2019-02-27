@@ -15,14 +15,12 @@ use Yii;
 // CMG Imports
 use cmsgears\cms\common\config\CmsGlobal;
 
-use cmsgears\widgets\blog\base\PageWidget as BasePageWidget;
-
 /**
  * PageWidget shows the most recent pages published on site.
  *
  * @since 1.0.0
  */
-class PageWidget extends BasePageWidget {
+class PageWidget extends \cmsgears\widgets\club\base\PageWidget {
 
 	// Variables ---------------------------------------------------
 
