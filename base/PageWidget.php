@@ -10,17 +10,15 @@
 namespace cmsgears\widgets\club\base;
 
 // Yii Imports
+use Yii;
 use yii\data\Sort;
-
-// CMG Imports
-use cmsgears\core\common\base\PageWidget as BasePageWidget;
 
 /**
  * PageWidget is the base widget of page models.
  *
  * @since 1.0.0
  */
-abstract class PageWidget extends BasePageWidget {
+abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 
 	// Variables ---------------------------------------------------
 
@@ -149,8 +147,8 @@ abstract class PageWidget extends BasePageWidget {
 				// Check Tag
 				if( empty( $this->tag ) && isset( $this->tagSlug ) && isset( $this->tagType ) ) {
 
-					$tagService		= Yii::$app->factory->get( 'tagService' );
-					$this->tag		= $tagService->getBySlugType( $this->tagSlug, $this->tagType );
+					$tagService	= Yii::$app->factory->get( 'tagService' );
+					$this->tag	= $tagService->getBySlugType( $this->tagSlug, $this->tagType );
 				}
 
 				// Category
@@ -244,16 +242,21 @@ abstract class PageWidget extends BasePageWidget {
 
 	protected function initCategoryModels() {
 
-		$modelTable		= $this->modelService->getModelTable();
-		$this->route	= empty( $this->route ) ? "category/{$this->category->slug}" : "$this->route/category/{$this->category->slug}";
+		$modelClass = $this->modelService->getModelClass();
+		$modelTable = $this->modelService->getModelTable();
+
+		$this->route = empty( $this->route ) ? "category/{$this->category->slug}" : "$this->route/category/{$this->category->slug}";
+
+		$query	= $modelClass::queryWithContent();
+		$sort	= $this->getSort();
 
 		// Child Sites Only
 		if( $this->excludeMain ) {
 
 			$this->dataProvider	= $this->modelService->getPageForSearch([
-				'limit' => $this->limit, 'public' => true, 'excludeMainSite' => true,
+				'query' => $query, 'limit' => $this->limit, 'public' => true, 'excludeMainSite' => true,
 				'searchContent' => $this->searchContent, 'category' => $this->category,
-				'route' => $this->route,
+				'sort' => $sort, 'route' => $this->route,
 				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
 		}
@@ -261,9 +264,9 @@ abstract class PageWidget extends BasePageWidget {
 		else if( $this->siteModels ) {
 
 			$this->dataProvider	= $this->modelService->getPageForSearch([
-				'limit' => $this->limit, 'public' => true, 'siteOnly' => true,
+				'query' => $query, 'limit' => $this->limit, 'public' => true, 'siteOnly' => true,
 				'searchContent' => $this->searchContent, 'category' => $this->category,
-				'route' => $this->route,
+				'sort' => $sort, 'route' => $this->route,
 				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
 		}
@@ -271,9 +274,9 @@ abstract class PageWidget extends BasePageWidget {
 		else if( isset( $this->siteId ) ) {
 
 			$this->dataProvider	= $this->modelService->getPageForSearch([
-				'limit' => $this->limit, 'public' => true, 'siteOnly' => true, 'siteId' => $this->siteId,
+				'query' => $query, 'limit' => $this->limit, 'public' => true, 'siteOnly' => true, 'siteId' => $this->siteId,
 				'searchContent' => $this->searchContent, 'category' => $this->category,
-				'route' => $this->route,
+				'sort' => $sort, 'route' => $this->route,
 				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
 		}
@@ -281,9 +284,9 @@ abstract class PageWidget extends BasePageWidget {
 		else {
 
 			$this->dataProvider	= $this->modelService->getPageForSearch([
-				'limit' => $this->limit, 'public' => true, 'ignoreSite' => true,
+				'query' => $query, 'limit' => $this->limit, 'public' => true, 'ignoreSite' => true,
 				'searchContent' => $this->searchContent, 'category' => $this->category,
-				'route' => $this->route,
+				'sort' => $sort, 'route' => $this->route,
 				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
 		}
@@ -291,16 +294,21 @@ abstract class PageWidget extends BasePageWidget {
 
 	protected function initTagModels() {
 
-		$modelTable		= $this->modelService->getModelTable();
-		$this->route	= empty( $this->route ) ? "tag/{$this->tag->slug}" : "$this->route/tag/{$this->tag->slug}";
+		$modelClass = $this->modelService->getModelClass();
+		$modelTable = $this->modelService->getModelTable();
+
+		$this->route = empty( $this->route ) ? "tag/{$this->tag->slug}" : "$this->route/tag/{$this->tag->slug}";
+
+		$query	= $modelClass::queryWithContent();
+		$sort	= $this->getSort();
 
 		// Child Sites Only
 		if( $this->excludeMain ) {
 
 			$this->dataProvider	= $this->modelService->getPageForSearch([
-				'limit' => $this->limit, 'public' => true, 'excludeMainSite' => true,
+				'query' => $query, 'limit' => $this->limit, 'public' => true, 'excludeMainSite' => true,
 				'searchContent' => $this->searchContent, 'tag' => $this->tag,
-				'route' => $this->route,
+				'sort' => $sort, 'route' => $this->route,
 				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
 		}
@@ -308,9 +316,9 @@ abstract class PageWidget extends BasePageWidget {
 		else if( $this->siteModels ) {
 
 			$this->dataProvider	= $this->modelService->getPageForSearch([
-				'limit' => $this->limit, 'public' => true, 'siteOnly' => true,
+				'query' => $query, 'limit' => $this->limit, 'public' => true, 'siteOnly' => true,
 				'searchContent' => $this->searchContent, 'tag' => $this->tag,
-				'route' => $this->route,
+				'sort' => $sort, 'route' => $this->route,
 				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
 		}
@@ -318,9 +326,9 @@ abstract class PageWidget extends BasePageWidget {
 		else if( isset( $this->siteId ) ) {
 
 			$this->dataProvider	= $this->modelService->getPageForSearch([
-				'limit' => $this->limit, 'public' => true, 'siteOnly' => true, 'siteId' => $this->siteId,
+				'query' => $query, 'limit' => $this->limit, 'public' => true, 'siteOnly' => true, 'siteId' => $this->siteId,
 				'searchContent' => $this->searchContent, 'tag' => $this->tag,
-				'route' => $this->route,
+				'sort' => $sort, 'route' => $this->route,
 				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
 		}
@@ -328,9 +336,9 @@ abstract class PageWidget extends BasePageWidget {
 		else {
 
 			$this->dataProvider	= $this->modelService->getPageForSearch([
-				'limit' => $this->limit, 'public' => true, 'ignoreSite' => true,
+				'query' => $query, 'limit' => $this->limit, 'public' => true, 'ignoreSite' => true,
 				'searchContent' => $this->searchContent, 'tag' => $this->tag,
-				'route' => $this->route,
+				'sort' => $sort, 'route' => $this->route,
 				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
 		}
@@ -338,16 +346,21 @@ abstract class PageWidget extends BasePageWidget {
 
 	protected function initAuthorModels() {
 
-		$modelTable		= $this->modelService->getModelTable();
-		$this->route	= empty( $this->route ) ? "author/{$this->author->username}" : "$this->route/author/{$this->author->username}";
+		$modelClass = $this->modelService->getModelClass();
+		$modelTable = $this->modelService->getModelTable();
+
+		$this->route = empty( $this->route ) ? "author/{$this->author->username}" : "$this->route/author/{$this->author->username}";
+
+		$query	= $modelClass::queryWithContent();
+		$sort	= $this->getSort();
 
 		// Child Sites Only
 		if( $this->excludeMain ) {
 
 			$this->dataProvider	= $this->modelService->getPageForSearch([
-				'limit' => $this->limit, 'public' => true, 'excludeMainSite' => true,
+				'query' => $query, 'limit' => $this->limit, 'public' => true, 'excludeMainSite' => true,
 				'searchContent' => $this->searchContent,
-				'route' => $this->route,
+				'sort' => $sort, 'route' => $this->route,
 				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $this->author->id ]
 			]);
 		}
@@ -355,9 +368,9 @@ abstract class PageWidget extends BasePageWidget {
 		else if( $this->siteModels ) {
 
 			$this->dataProvider	= $this->modelService->getPageForSearch([
-				'limit' => $this->limit, 'public' => true, 'siteOnly' => true,
+				'query' => $query, 'limit' => $this->limit, 'public' => true, 'siteOnly' => true,
 				'searchContent' => $this->searchContent,
-				'route' => $this->route,
+				'sort' => $sort, 'route' => $this->route,
 				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $this->author->id ]
 			]);
 		}
@@ -365,9 +378,9 @@ abstract class PageWidget extends BasePageWidget {
 		else if( isset( $this->siteId ) ) {
 
 			$this->dataProvider	= $this->modelService->getPageForSearch([
-				'limit' => $this->limit, 'public' => true, 'siteOnly' => true, 'siteId' => $this->siteId,
+				'query' => $query, 'limit' => $this->limit, 'public' => true, 'siteOnly' => true, 'siteId' => $this->siteId,
 				'searchContent' => $this->searchContent,
-				'route' => $this->route,
+				'sort' => $sort, 'route' => $this->route,
 				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $this->author->id ]
 			]);
 		}
@@ -375,9 +388,9 @@ abstract class PageWidget extends BasePageWidget {
 		else {
 
 			$this->dataProvider	= $this->modelService->getPageForSearch([
-				'limit' => $this->limit, 'public' => true, 'ignoreSite' => true,
+				'query' => $query, 'limit' => $this->limit, 'public' => true, 'ignoreSite' => true,
 				'searchContent' => $this->searchContent,
-				'route' => $this->route,
+				'sort' => $sort, 'route' => $this->route,
 				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $this->author->id ]
 			]);
 		}
@@ -385,27 +398,17 @@ abstract class PageWidget extends BasePageWidget {
 
 	public function initPageModels() {
 
+		$modelClass = $this->modelService->getModelClass();
 		$modelTable = $this->modelService->getModelTable();
 
-		$sort = new Sort([
-			'attributes' => [
-				'id' => [
-					'asc' => [ "$modelTable.id" => SORT_ASC ],
-					'desc' => [ "$modelTable.id" => SORT_DESC ],
-					'default' => SORT_DESC,
-					'label' => 'Id'
-				]
-			],
-			'defaultOrder' => [
-				'id' => SORT_DESC
-			]
-		]);
+		$query	= $modelClass::queryWithContent();
+		$sort	= $this->getSort();
 
 		// Child Sites Only
 		if( $this->excludeMain ) {
 
 			$this->dataProvider	= $this->modelService->getPageForSearch([
-				'route' => $this->route, 'public' => true, 'excludeMainSite' => true,
+				'query' => $query, 'route' => $this->route, 'public' => true, 'excludeMainSite' => true,
 				'searchContent' => $this->searchContent, 'searchCategory' => $this->searchCategory, 'searchTag' => $this->searchtag,
 				'limit' => $this->limit, 'sort' => $sort, 'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
@@ -414,7 +417,7 @@ abstract class PageWidget extends BasePageWidget {
 		else if( $this->siteModels ) {
 
 			$this->dataProvider	= $this->modelService->getPageForSearch([
-				'route' => $this->route, 'public' => true, 'siteOnly' => true,
+				'query' => $query, 'route' => $this->route, 'public' => true, 'siteOnly' => true,
 				'searchContent' => $this->searchContent, 'searchCategory' => $this->searchCategory, 'searchTag' => $this->searchtag,
 				'limit' => $this->limit, 'sort' => $sort, 'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
@@ -423,7 +426,7 @@ abstract class PageWidget extends BasePageWidget {
 		else if( isset( $this->siteId ) ) {
 
 			$this->dataProvider	= $this->modelService->getPageForSearch([
-				'route' => $this->route, 'public' => true, 'siteOnly' => true, 'siteId' => $this->siteId,
+				'query' => $query, 'route' => $this->route, 'public' => true, 'siteOnly' => true, 'siteId' => $this->siteId,
 				'searchContent' => $this->searchContent, 'searchCategory' => $this->searchCategory, 'searchTag' => $this->searchtag,
 				'limit' => $this->limit, 'sort' => $sort, 'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
@@ -432,7 +435,7 @@ abstract class PageWidget extends BasePageWidget {
 		else {
 
 			$this->dataProvider	= $this->modelService->getPageForSearch([
-				'route' => $this->route, 'public' => true, 'ignoreSite' => true,
+				'query' => $query, 'route' => $this->route, 'public' => true, 'ignoreSite' => true,
 				'searchContent' => $this->searchContent, 'searchCategory' => $this->searchCategory, 'searchTag' => $this->searchtag,
 				'limit' => $this->limit, 'sort' => $sort, 'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
@@ -443,12 +446,14 @@ abstract class PageWidget extends BasePageWidget {
 
 		$modelTable = $this->modelService->getModelTable();
 
+		$sort = $this->getOrder();
+
 		// Child Sites Only
 		if( $this->excludeMain ) {
 
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
-				'sort' => [ 'id' => SORT_DESC ], 'excludeMainSite' => true,
+				'sort' => $sort, 'excludeMainSite' => true,
 				'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.featured" => true ]
 			]);
 		}
@@ -457,7 +462,7 @@ abstract class PageWidget extends BasePageWidget {
 
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
-				'sort' => [ 'id' => SORT_DESC ], 'siteOnly' => true,
+				'sort' => $sort, 'siteOnly' => true,
 				'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.featured" => true ]
 			]);
 		}
@@ -466,7 +471,7 @@ abstract class PageWidget extends BasePageWidget {
 
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
-				'sort' => [ 'id' => SORT_DESC ], 'siteOnly' => true, 'siteId' => $this->siteId,
+				'sort' => $sort, 'siteOnly' => true, 'siteId' => $this->siteId,
 				'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.featured" => true ]
 			]);
 		}
@@ -475,7 +480,7 @@ abstract class PageWidget extends BasePageWidget {
 
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
-				'sort' => [ 'id' => SORT_DESC ], 'ignoreSite' => true,
+				'sort' => $sort, 'ignoreSite' => true,
 				'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.featured" => true ]
 			]);
 		}
@@ -485,12 +490,14 @@ abstract class PageWidget extends BasePageWidget {
 
 		$modelTable = $this->modelService->getModelTable();
 
+		$sort = $this->getOrder();
+
 		// Child Sites Only
 		if( $this->excludeMain ) {
 
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
-				'sort' => [ 'id' => SORT_DESC ], 'excludeMainSite' => true,
+				'sort' => $sort, 'excludeMainSite' => true,
 				'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
 		}
@@ -499,7 +506,7 @@ abstract class PageWidget extends BasePageWidget {
 
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
-				'sort' => [ 'id' => SORT_DESC ], 'siteOnly' => true,
+				'sort' => $sort, 'siteOnly' => true,
 				'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
 		}
@@ -508,7 +515,7 @@ abstract class PageWidget extends BasePageWidget {
 
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
-				'sort' => [ 'id' => SORT_DESC ], 'siteOnly' => true, 'siteId' => $this->siteId,
+				'sort' => $sort, 'siteOnly' => true, 'siteId' => $this->siteId,
 				'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
 		}
@@ -517,7 +524,7 @@ abstract class PageWidget extends BasePageWidget {
 
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
-				'sort' => [ 'id' => SORT_DESC ], 'ignoreSite' => true,
+				'sort' => $sort, 'ignoreSite' => true,
 				'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
 		}
@@ -527,12 +534,14 @@ abstract class PageWidget extends BasePageWidget {
 
 		$modelTable = $this->modelService->getModelTable();
 
+		$sort = $this->getOrder();
+
 		// Child Sites Only
 		if( $this->excludeMain ) {
 
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
-				'sort' => [ 'id' => SORT_DESC ], 'excludeMainSite' => true,
+				'sort' => $sort, 'excludeMainSite' => true,
 				'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
 		}
@@ -541,7 +550,7 @@ abstract class PageWidget extends BasePageWidget {
 
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
-				'sort' => [ 'id' => SORT_DESC ], 'siteOnly' => true,
+				'sort' => $sort, 'siteOnly' => true,
 				'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
 		}
@@ -550,7 +559,7 @@ abstract class PageWidget extends BasePageWidget {
 
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
-				'sort' => [ 'id' => SORT_DESC ], 'siteOnly' => true, 'siteId' => $this->siteId,
+				'sort' => $sort, 'siteOnly' => true, 'siteId' => $this->siteId,
 				'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
 		}
@@ -559,7 +568,7 @@ abstract class PageWidget extends BasePageWidget {
 
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
-				'sort' => [ 'id' => SORT_DESC ], 'ignoreSite' => true,
+				'sort' => $sort, 'ignoreSite' => true,
 				'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
 		}
@@ -569,12 +578,14 @@ abstract class PageWidget extends BasePageWidget {
 
 		$modelTable = $this->modelService->getModelTable();
 
+		$sort = $this->getOrder();
+
 		// Child Sites Only
 		if( $this->excludeMain ) {
 
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
-				'sort' => [ 'id' => SORT_DESC ], 'excludeMainSite' => true,
+				'sort' => $sort, 'excludeMainSite' => true,
 				'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $author->id ]
 			]);
 		}
@@ -583,7 +594,7 @@ abstract class PageWidget extends BasePageWidget {
 
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
-				'sort' => [ 'id' => SORT_DESC ], 'siteOnly' => true,
+				'sort' => $sort, 'siteOnly' => true,
 				'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $author->id ]
 			]);
 		}
@@ -592,7 +603,7 @@ abstract class PageWidget extends BasePageWidget {
 
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
-				'sort' => [ 'id' => SORT_DESC ], 'siteOnly' => true, 'siteId' => $this->siteId,
+				'sort' => $sort, 'siteOnly' => true, 'siteId' => $this->siteId,
 				'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $author->id ]
 			]);
 		}
@@ -601,7 +612,7 @@ abstract class PageWidget extends BasePageWidget {
 
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
-				'sort' => [ 'id' => SORT_DESC ], 'ignoreSite' => true,
+				'sort' => $sort, 'ignoreSite' => true,
 				'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $author->id ]
 			]);
 		}
@@ -649,6 +660,36 @@ abstract class PageWidget extends BasePageWidget {
 				'conditions' => [ "$modelTable.type" => $this->type ]
 			]);
 		}
+	}
+
+	public function getSort() {
+
+		$modelTable = $this->modelService->getModelTable();
+
+		$sort = new Sort([
+			'attributes' => [
+				'id' => [
+					'asc' => [ "$modelTable.id" => SORT_ASC ],
+					'desc' => [ "$modelTable.id" => SORT_DESC ],
+					'default' => SORT_DESC,
+					'label' => 'Id'
+				],
+				'pdate' => [
+					'asc' => [ "modelContent.publishedAt" => SORT_ASC ],
+					'desc' => [ "modelContent.publishedAt" => SORT_DESC ],
+					'default' => SORT_DESC,
+					'label' => 'Published At'
+				]
+			],
+			'defaultOrder' => [ 'pdate' => SORT_DESC ]
+		]);
+
+		return $sort;
+	}
+
+	public function getOrder() {
+
+		return [ 'publishedAt' => SORT_DESC ];
 	}
 
 }
