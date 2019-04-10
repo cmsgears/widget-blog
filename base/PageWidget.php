@@ -247,7 +247,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 
 		$this->route = empty( $this->route ) ? "category/{$this->category->slug}" : "$this->route/category/{$this->category->slug}";
 
-		$query	= $modelClass::queryWithContent();
+		$query	= $modelClass::find()->joinWith( 'modelContent' );
 		$sort	= $this->getSort();
 
 		// Child Sites Only
@@ -299,7 +299,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 
 		$this->route = empty( $this->route ) ? "tag/{$this->tag->slug}" : "$this->route/tag/{$this->tag->slug}";
 
-		$query	= $modelClass::queryWithContent();
+		$query	= $modelClass::find()->joinWith( 'modelContent' );
 		$sort	= $this->getSort();
 
 		// Child Sites Only
@@ -351,7 +351,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 
 		$this->route = empty( $this->route ) ? "author/{$this->author->username}" : "$this->route/author/{$this->author->username}";
 
-		$query	= $modelClass::queryWithContent();
+		$query	= $modelClass::find()->joinWith( 'modelContent' );
 		$sort	= $this->getSort();
 
 		// Child Sites Only
@@ -401,7 +401,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 		$modelClass = $this->modelService->getModelClass();
 		$modelTable = $this->modelService->getModelTable();
 
-		$query	= $modelClass::queryWithContent();
+		$query	= $modelClass::find()->joinWith( 'modelContent' );
 		$sort	= $this->getSort();
 
 		// Child Sites Only
@@ -447,7 +447,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 		$modelClass = $this->modelService->getModelClass();
 		$modelTable = $this->modelService->getModelTable();
 
-		$query	= $modelClass::queryWithContent();
+		$query	= $modelClass::find()->joinWith( 'modelContent' );
 		$sort	= $this->getOrder();
 
 		// Child Sites Only
@@ -493,7 +493,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 		$modelClass = $this->modelService->getModelClass();
 		$modelTable = $this->modelService->getModelTable();
 
-		$query	= $modelClass::queryWithContent();
+		$query	= $modelClass::find()->joinWith( 'modelContent' );
 		$sort	= $this->getOrder();
 
 		// Child Sites Only
@@ -539,7 +539,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 		$modelClass = $this->modelService->getModelClass();
 		$modelTable = $this->modelService->getModelTable();
 
-		$query	= $modelClass::queryWithContent();
+		$query	= $modelClass::find()->joinWith( 'modelContent' );
 		$sort	= $this->getOrder();
 
 		// Child Sites Only
@@ -585,7 +585,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 		$modelClass = $this->modelService->getModelClass();
 		$modelTable = $this->modelService->getModelTable();
 
-		$query	= $modelClass::queryWithContent();
+		$query	= $modelClass::find()->joinWith( 'modelContent' );
 		$sort	= $this->getOrder();
 
 		// Child Sites Only
