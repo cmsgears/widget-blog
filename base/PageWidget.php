@@ -244,6 +244,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 
 		$modelClass = $this->modelService->getModelClass();
 		$modelTable = $this->modelService->getModelTable();
+		$siteTable	= Yii::$app->factory->get( 'siteService' )->getModelTable();
 
 		$this->route = empty( $this->route ) ? "category/{$this->category->slug}" : "$this->route/category/{$this->category->slug}";
 
@@ -253,11 +254,13 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 		// Child Sites Only
 		if( $this->excludeMain ) {
 
+			$query->joinWith( 'site' );
+
 			$this->dataProvider	= $this->modelService->getPageForSearch([
 				'query' => $query, 'limit' => $this->limit, 'public' => true, 'excludeMainSite' => true,
 				'searchContent' => $this->searchContent, 'category' => $this->category,
 				'sort' => $sort, 'route' => $this->route,
-				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type ]
+				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type, "$siteTable.primary" => true ]
 			]);
 		}
 		// Active Site Only
@@ -283,11 +286,13 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 		// All Sites
 		else {
 
+			$query->joinWith( 'site' );
+
 			$this->dataProvider	= $this->modelService->getPageForSearch([
 				'query' => $query, 'limit' => $this->limit, 'public' => true, 'ignoreSite' => true,
 				'searchContent' => $this->searchContent, 'category' => $this->category,
 				'sort' => $sort, 'route' => $this->route,
-				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type ]
+				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type, "$siteTable.primary" => true ]
 			]);
 		}
 	}
@@ -296,6 +301,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 
 		$modelClass = $this->modelService->getModelClass();
 		$modelTable = $this->modelService->getModelTable();
+		$siteTable	= Yii::$app->factory->get( 'siteService' )->getModelTable();
 
 		$this->route = empty( $this->route ) ? "tag/{$this->tag->slug}" : "$this->route/tag/{$this->tag->slug}";
 
@@ -305,11 +311,13 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 		// Child Sites Only
 		if( $this->excludeMain ) {
 
+			$query->joinWith( 'site' );
+
 			$this->dataProvider	= $this->modelService->getPageForSearch([
 				'query' => $query, 'limit' => $this->limit, 'public' => true, 'excludeMainSite' => true,
 				'searchContent' => $this->searchContent, 'tag' => $this->tag,
 				'sort' => $sort, 'route' => $this->route,
-				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type ]
+				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type, "$siteTable.primary" => true ]
 			]);
 		}
 		// Active Site Only
@@ -335,11 +343,13 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 		// All Sites
 		else {
 
+			$query->joinWith( 'site' );
+
 			$this->dataProvider	= $this->modelService->getPageForSearch([
 				'query' => $query, 'limit' => $this->limit, 'public' => true, 'ignoreSite' => true,
 				'searchContent' => $this->searchContent, 'tag' => $this->tag,
 				'sort' => $sort, 'route' => $this->route,
-				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type ]
+				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type, "$siteTable.primary" => true ]
 			]);
 		}
 	}
@@ -348,6 +358,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 
 		$modelClass = $this->modelService->getModelClass();
 		$modelTable = $this->modelService->getModelTable();
+		$siteTable	= Yii::$app->factory->get( 'siteService' )->getModelTable();
 
 		$this->route = empty( $this->route ) ? "author/{$this->author->username}" : "$this->route/author/{$this->author->username}";
 
@@ -357,11 +368,13 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 		// Child Sites Only
 		if( $this->excludeMain ) {
 
+			$query->joinWith( 'site' );
+
 			$this->dataProvider	= $this->modelService->getPageForSearch([
 				'query' => $query, 'limit' => $this->limit, 'public' => true, 'excludeMainSite' => true,
 				'searchContent' => $this->searchContent,
 				'sort' => $sort, 'route' => $this->route,
-				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $this->author->id ]
+				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $this->author->id, "$siteTable.primary" => true ]
 			]);
 		}
 		// Active Site Only
@@ -387,11 +400,13 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 		// All Sites
 		else {
 
+			$query->joinWith( 'site' );
+
 			$this->dataProvider	= $this->modelService->getPageForSearch([
 				'query' => $query, 'limit' => $this->limit, 'public' => true, 'ignoreSite' => true,
 				'searchContent' => $this->searchContent,
 				'sort' => $sort, 'route' => $this->route,
-				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $this->author->id ]
+				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $this->author->id, "$siteTable.primary" => true ]
 			]);
 		}
 	}
@@ -400,6 +415,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 
 		$modelClass = $this->modelService->getModelClass();
 		$modelTable = $this->modelService->getModelTable();
+		$siteTable	= Yii::$app->factory->get( 'siteService' )->getModelTable();
 
 		$query	= $modelClass::find()->joinWith( 'modelContent' );
 		$sort	= $this->getSort();
@@ -407,10 +423,12 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 		// Child Sites Only
 		if( $this->excludeMain ) {
 
+			$query->joinWith( 'site' );
+
 			$this->dataProvider	= $this->modelService->getPageForSearch([
 				'query' => $query, 'route' => $this->route, 'public' => true, 'excludeMainSite' => true,
 				'searchContent' => $this->searchContent, 'searchCategory' => $this->searchCategory, 'searchTag' => $this->searchtag,
-				'limit' => $this->limit, 'sort' => $sort, 'conditions' => [ "$modelTable.type" => $this->type ]
+				'limit' => $this->limit, 'sort' => $sort, 'conditions' => [ "$modelTable.type" => $this->type, "$siteTable.primary" => true ]
 			]);
 		}
 		// Active Site Only
@@ -434,10 +452,12 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 		// All Sites
 		else {
 
+			$query->joinWith( 'site' );
+
 			$this->dataProvider	= $this->modelService->getPageForSearch([
 				'query' => $query, 'route' => $this->route, 'public' => true, 'ignoreSite' => true,
 				'searchContent' => $this->searchContent, 'searchCategory' => $this->searchCategory, 'searchTag' => $this->searchtag,
-				'limit' => $this->limit, 'sort' => $sort, 'conditions' => [ "$modelTable.type" => $this->type ]
+				'limit' => $this->limit, 'sort' => $sort, 'conditions' => [ "$modelTable.type" => $this->type, "$siteTable.primary" => true ]
 			]);
 		}
 	}
@@ -446,6 +466,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 
 		$modelClass = $this->modelService->getModelClass();
 		$modelTable = $this->modelService->getModelTable();
+		$siteTable	= Yii::$app->factory->get( 'siteService' )->getModelTable();
 
 		$query	= $modelClass::find()->joinWith( 'modelContent' );
 		$sort	= $this->getOrder();
@@ -453,10 +474,12 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 		// Child Sites Only
 		if( $this->excludeMain ) {
 
+			$query->joinWith( 'site' );
+
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
 				'query' => $query, 'sort' => $sort, 'excludeMainSite' => true,
-				'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.featured" => true ]
+				'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.featured" => true, "$siteTable.primary" => true ]
 			]);
 		}
 		// Active Site Only
@@ -480,10 +503,12 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 		// All Sites
 		else {
 
+			$query->joinWith( 'site' );
+
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
 				'query' => $query, 'sort' => $sort, 'ignoreSite' => true,
-				'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.featured" => true ]
+				'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.featured" => true, "$siteTable.primary" => true ]
 			]);
 		}
 	}
@@ -492,6 +517,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 
 		$modelClass = $this->modelService->getModelClass();
 		$modelTable = $this->modelService->getModelTable();
+		$siteTable	= Yii::$app->factory->get( 'siteService' )->getModelTable();
 
 		$query	= $modelClass::find()->joinWith( 'modelContent' );
 		$sort	= $this->getOrder();
@@ -499,10 +525,12 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 		// Child Sites Only
 		if( $this->excludeMain ) {
 
+			$query->joinWith( 'site' );
+
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
 				'query' => $query, 'sort' => $sort, 'excludeMainSite' => true,
-				'conditions' => [ "$modelTable.type" => $this->type ]
+				'conditions' => [ "$modelTable.type" => $this->type, "$siteTable.primary" => true ]
 			]);
 		}
 		// Active Site Only
@@ -526,10 +554,12 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 		// All Sites
 		else {
 
+			$query->joinWith( 'site' );
+
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
 				'query' => $query, 'sort' => $sort, 'ignoreSite' => true,
-				'conditions' => [ "$modelTable.type" => $this->type ]
+				'conditions' => [ "$modelTable.type" => $this->type, "$siteTable.primary" => true ]
 			]);
 		}
 	}
@@ -538,6 +568,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 
 		$modelClass = $this->modelService->getModelClass();
 		$modelTable = $this->modelService->getModelTable();
+		$siteTable	= Yii::$app->factory->get( 'siteService' )->getModelTable();
 
 		$query	= $modelClass::find()->joinWith( 'modelContent' );
 		$sort	= $this->getOrder();
@@ -545,10 +576,12 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 		// Child Sites Only
 		if( $this->excludeMain ) {
 
+			$query->joinWith( 'site' );
+
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
 				'query' => $query, 'sort' => $sort, 'excludeMainSite' => true,
-				'conditions' => [ "$modelTable.type" => $this->type ]
+				'conditions' => [ "$modelTable.type" => $this->type, "$siteTable.primary" => true ]
 			]);
 		}
 		// Active Site Only
@@ -572,10 +605,12 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 		// All Sites
 		else {
 
+			$query->joinWith( 'site' );
+
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
 				'query' => $query, 'sort' => $sort, 'ignoreSite' => true,
-				'conditions' => [ "$modelTable.type" => $this->type ]
+				'conditions' => [ "$modelTable.type" => $this->type, "$siteTable.primary" => true ]
 			]);
 		}
 	}
@@ -584,6 +619,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 
 		$modelClass = $this->modelService->getModelClass();
 		$modelTable = $this->modelService->getModelTable();
+		$siteTable	= Yii::$app->factory->get( 'siteService' )->getModelTable();
 
 		$query	= $modelClass::find()->joinWith( 'modelContent' );
 		$sort	= $this->getOrder();
@@ -591,10 +627,12 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 		// Child Sites Only
 		if( $this->excludeMain ) {
 
+			$query->joinWith( 'site' );
+
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
 				'query' => $query, 'sort' => $sort, 'excludeMainSite' => true,
-				'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $author->id ]
+				'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $author->id, "$siteTable.primary" => true ]
 			]);
 		}
 		// Active Site Only
@@ -618,10 +656,12 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 		// All Sites
 		else {
 
+			$query->joinWith( 'site' );
+
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
 				'query' => $query, 'sort' => $sort, 'ignoreSite' => true,
-				'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $author->id ]
+				'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $author->id, "$siteTable.primary" => true ]
 			]);
 		}
 	}
