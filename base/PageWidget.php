@@ -669,6 +669,13 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 	public function initSimilar() {
 
 		$modelTable		= $this->modelService->getModelTable();
+
+		if( empty( $this->model ) ) {
+
+			$params		= Yii::$app->view->params;
+			$this->model	= isset( $params[ 'model' ] ) ? $params[ 'model' ] : [];
+		}
+
 		$categoryIds	= $this->model->getCategoryIdList( true );
 		$tagIds			= $this->model->getTagIdList( true );
 
