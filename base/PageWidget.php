@@ -581,7 +581,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
 				'query' => $query, 'sort' => $sort, 'excludeMainSite' => true,
-				'conditions' => [ "$modelTable.type" => $this->type, "$siteTable.primary" => true ]
+				'conditions' => [ "$modelTable.type" => $this->type, "$siteTable.primary" => true, "$modelTable.popular" => true ]
 			]);
 		}
 		// Active Site Only
@@ -590,7 +590,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
 				'query' => $query, 'sort' => $sort, 'siteOnly' => true,
-				'conditions' => [ "$modelTable.type" => $this->type ]
+				'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.popular" => true ]
 			]);
 		}
 		// Specific Site Only
@@ -599,7 +599,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
 				'query' => $query, 'sort' => $sort, 'siteOnly' => true, 'siteId' => $this->siteId,
-				'conditions' => [ "$modelTable.type" => $this->type ]
+				'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.popular" => true ]
 			]);
 		}
 		// All Sites
@@ -610,7 +610,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
 				'query' => $query, 'sort' => $sort, 'ignoreSite' => true,
-				'conditions' => [ "$modelTable.type" => $this->type, "$siteTable.primary" => true ]
+				'conditions' => [ "$modelTable.type" => $this->type, "$siteTable.primary" => true, "$modelTable.popular" => true ]
 			]);
 		}
 	}
