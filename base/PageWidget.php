@@ -457,7 +457,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 			$this->dataProvider	= $this->modelService->getPageForSearch([
 				'query' => $query, 'route' => $this->route, 'public' => true, 'ignoreSite' => true,
 				'searchContent' => $this->searchContent, 'searchCategory' => $this->searchCategory, 'searchTag' => $this->searchtag,
-				'limit' => $this->limit, 'sort' => $sort, 'conditions' => [ "$modelTable.type" => $this->type, "$siteTable.primary" => true ]
+				'limit' => $this->limit, 'sort' => $sort, 'conditions' => [ "$modelTable.type1" => $this->type, "$siteTable.primary" => true ]
 			]);
 		}
 	}
@@ -668,12 +668,13 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 
 	public function initSimilar() {
 
-		$modelTable		= $this->modelService->getModelTable();
+		$modelTable = $this->modelService->getModelTable();
 
 		if( empty( $this->model ) ) {
 
-			$params		= Yii::$app->view->params;
-			$this->model	= isset( $params[ 'model' ] ) ? $params[ 'model' ] : [];
+			$params = Yii::$app->view->params;
+
+			$this->model = isset( $params[ 'model' ] ) ? $params[ 'model' ] : [];
 		}
 
 		$categoryIds	= $this->model->getCategoryIdList( true );
