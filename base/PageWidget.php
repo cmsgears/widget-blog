@@ -93,11 +93,12 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 	public $tagSlug;
 	public $tagType;
 
+	// Model Type
+	public $type;
+
 	// Protected --------------
 
 	protected $modelService;
-
-	protected $type;
 
 	protected $searchContent	= true;
 	protected $searchCategory	= false;

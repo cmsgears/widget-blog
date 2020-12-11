@@ -42,9 +42,9 @@ class ArticleWidget extends \cmsgears\widgets\club\base\PageWidget {
 
 	public $singlePath = 'article';
 
-	// Protected --------------
+	public $type = CmsGlobal::TYPE_ARTICLE;
 
-	protected $type = CmsGlobal::TYPE_ARTICLE;
+	// Protected --------------
 
 	protected $searchContent = true;
 

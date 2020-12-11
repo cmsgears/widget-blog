@@ -40,9 +40,9 @@ class PostWidget extends \cmsgears\widgets\club\base\PageWidget {
 	public $allPath		= 'blog';
 	public $singlePath	= 'blog';
 
-	// Protected --------------
+	public $type = CmsGlobal::TYPE_POST;
 
-	protected $type = CmsGlobal::TYPE_POST;
+	// Protected --------------
 
 	protected $searchContent	= true;
 	protected $searchCategory	= true;
