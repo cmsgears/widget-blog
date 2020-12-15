@@ -70,6 +70,8 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 	 */
 	public $model;
 
+	public $joinModelContent = true;
+
 	/**
 	 * Flag to enable default site banner.
 	 *
@@ -143,17 +145,25 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 
 					$categoryService	= Yii::$app->factory->get( 'categoryService' );
 					$this->category		= $categoryService->getBySlugType( $this->categorySlug, $this->categoryType );
-				}
 
+					if( isset( $this->category ) ) {
+
+						$this->initCategoryModels();
+					}
+				}
 				// Check Tag
-				if( empty( $this->tag ) && isset( $this->tagSlug ) && isset( $this->tagType ) ) {
+				else if( empty( $this->tag ) && isset( $this->tagSlug ) && isset( $this->tagType ) ) {
 
 					$tagService	= Yii::$app->factory->get( 'tagService' );
 					$this->tag	= $tagService->getBySlugType( $this->tagSlug, $this->tagType );
-				}
 
+					if( isset( $this->tag ) ) {
+
+						$this->initTagModels();
+					}
+				}
 				// Category
-				if( isset( $this->category ) ) {
+				else if( isset( $this->category ) ) {
 
 					$this->initCategoryModels();
 				}
@@ -174,7 +184,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 				}
 			}
 
-			$this->modelPage = $this->dataProvider->getModels();
+			$this->modelPage = isset( $this->dataProvider ) ? $this->dataProvider->getModels() : [];
 		}
 		// Find models for popular, recent and related widgets
 		else {
@@ -249,7 +259,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 
 		$this->route = empty( $this->route ) ? "category/{$this->category->slug}" : "$this->route/category/{$this->category->slug}";
 
-		$query	= $modelClass::find()->joinWith( 'modelContent' );
+		$query	= $this->joinModelContent ? $modelClass::find()->joinWith( 'modelContent' ) : $modelClass::find();
 		$sort	= $this->getSort();
 
 		$conditions = [];
@@ -317,7 +327,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 
 		$this->route = empty( $this->route ) ? "tag/{$this->tag->slug}" : "$this->route/tag/{$this->tag->slug}";
 
-		$query	= $modelClass::find()->joinWith( 'modelContent' );
+		$query	= $this->joinModelContent ? $modelClass::find()->joinWith( 'modelContent' ) : $modelClass::find();
 		$sort	= $this->getSort();
 
 		$conditions = [];
@@ -385,7 +395,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 
 		$this->route = empty( $this->route ) ? "author/{$this->author->username}" : "$this->route/author/{$this->author->username}";
 
-		$query	= $modelClass::find()->joinWith( 'modelContent' );
+		$query	= $this->joinModelContent ? $modelClass::find()->joinWith( 'modelContent' ) : $modelClass::find();
 		$sort	= $this->getSort();
 
 		$conditions = [];
@@ -453,7 +463,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 		$modelTable = $this->modelService->getModelTable();
 		$siteTable	= Yii::$app->factory->get( 'siteService' )->getModelTable();
 
-		$query	= $modelClass::find()->joinWith( 'modelContent' );
+		$query	= $this->joinModelContent ? $modelClass::find()->joinWith( 'modelContent' ) : $modelClass::find();
 		$sort	= $this->getSort();
 
 		$conditions = [];
@@ -515,7 +525,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 		$modelTable = $this->modelService->getModelTable();
 		$siteTable	= Yii::$app->factory->get( 'siteService' )->getModelTable();
 
-		$query	= $modelClass::find()->joinWith( 'modelContent' );
+		$query	= $this->joinModelContent ? $modelClass::find()->joinWith( 'modelContent' ) : $modelClass::find();
 		$sort	= $this->getOrder();
 
 		$conditions = [];
@@ -579,7 +589,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 		$modelTable = $this->modelService->getModelTable();
 		$siteTable	= Yii::$app->factory->get( 'siteService' )->getModelTable();
 
-		$query	= $modelClass::find()->joinWith( 'modelContent' );
+		$query	= $this->joinModelContent ? $modelClass::find()->joinWith( 'modelContent' ) : $modelClass::find();
 		$sort	= $this->getOrder();
 
 		$conditions = [];
@@ -641,7 +651,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 		$modelTable = $this->modelService->getModelTable();
 		$siteTable	= Yii::$app->factory->get( 'siteService' )->getModelTable();
 
-		$query	= $modelClass::find()->joinWith( 'modelContent' );
+		$query	= $this->joinModelContent ? $modelClass::find()->joinWith( 'modelContent' ) : $modelClass::find();
 		$sort	= $this->getOrder();
 
 		$conditions = [];
@@ -705,7 +715,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 		$modelTable = $this->modelService->getModelTable();
 		$siteTable	= Yii::$app->factory->get( 'siteService' )->getModelTable();
 
-		$query	= $modelClass::find()->joinWith( 'modelContent' );
+		$query	= $this->joinModelContent ? $modelClass::find()->joinWith( 'modelContent' ) : $modelClass::find();
 		$sort	= $this->getOrder();
 
 		$conditions = [];
@@ -826,30 +836,43 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 
 		$modelTable = $this->modelService->getModelTable();
 
-		$sort = new Sort([
+		$sortconfig = [
 			'attributes' => [
 				'id' => [
 					'asc' => [ "$modelTable.id" => SORT_ASC ],
 					'desc' => [ "$modelTable.id" => SORT_DESC ],
 					'default' => SORT_DESC,
 					'label' => 'Id'
-				],
-				'pdate' => [
-					'asc' => [ "modelContent.publishedAt" => SORT_ASC ],
-					'desc' => [ "modelContent.publishedAt" => SORT_DESC ],
-					'default' => SORT_DESC,
-					'label' => 'Published At'
 				]
 			],
-			'defaultOrder' => [ 'pdate' => SORT_DESC ]
-		]);
+			'defaultOrder' => [ 'id' => SORT_DESC ]
+		];
+
+		if( $this->joinModelContent ) {
+
+			$sortconfig[ 'attributes' ][ 'pdate' ] = [
+				'asc' => [ "modelContent.publishedAt" => SORT_ASC ],
+				'desc' => [ "modelContent.publishedAt" => SORT_DESC ],
+				'default' => SORT_DESC,
+				'label' => 'Published At'
+			];
+
+			$sortconfig[ 'defaultOrder' ] = [ 'pdate' => SORT_DESC ];
+		}
+
+		$sort = new Sort( $sortconfig );
 
 		return $sort;
 	}
 
 	public function getOrder() {
 
-		return [ 'publishedAt' => SORT_DESC ];
+		if( $this->joinModelContent ) {
+
+			return [ 'publishedAt' => SORT_DESC ];
+		}
+
+		return [ 'id' => SORT_DESC ];
 	}
 
 }
