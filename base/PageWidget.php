@@ -262,10 +262,15 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 
 		$this->route = empty( $this->route ) ? "category/{$this->category->slug}" : "$this->route/category/{$this->category->slug}";
 
-		$query	= $this->joinModelContent ? $modelClass::find()->joinWith( 'modelContent' ) : $modelClass::find();
+		$query	= empty( $this->query ) ? $modelClass::find() : $this->query;
 		$sort	= $this->getSort();
 
 		$conditions = [];
+
+		if( $this->joinModelContent ) {
+
+			$query->joinWith( 'modelContent' );
+		}
 
 		if( !empty( $this->type ) ) {
 
@@ -330,10 +335,15 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 
 		$this->route = empty( $this->route ) ? "tag/{$this->tag->slug}" : "$this->route/tag/{$this->tag->slug}";
 
-		$query	= $this->joinModelContent ? $modelClass::find()->joinWith( 'modelContent' ) : $modelClass::find();
+		$query	= empty( $this->query ) ? $modelClass::find() : $this->query;
 		$sort	= $this->getSort();
 
 		$conditions = [];
+
+		if( $this->joinModelContent ) {
+
+			$query->joinWith( 'modelContent' );
+		}
 
 		if( !empty( $this->type ) ) {
 
@@ -398,10 +408,15 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 
 		$this->route = empty( $this->route ) ? "author/{$this->author->username}" : "$this->route/author/{$this->author->username}";
 
-		$query	= $this->joinModelContent ? $modelClass::find()->joinWith( 'modelContent' ) : $modelClass::find();
+		$query	= empty( $this->query ) ? $modelClass::find() : $this->query;
 		$sort	= $this->getSort();
 
 		$conditions = [];
+
+		if( $this->joinModelContent ) {
+
+			$query->joinWith( 'modelContent' );
+		}
 
 		$conditions[ "$modelTable.createdBy" ] = $this->author->id;
 
@@ -466,10 +481,15 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 		$modelTable = $this->modelService->getModelTable();
 		$siteTable	= Yii::$app->factory->get( 'siteService' )->getModelTable();
 
-		$query	= $this->joinModelContent ? $modelClass::find()->joinWith( 'modelContent' ) : $modelClass::find();
+		$query	= empty( $this->query ) ? $modelClass::find() : $this->query;
 		$sort	= $this->getSort();
 
 		$conditions = [];
+
+		if( $this->joinModelContent ) {
+
+			$query->joinWith( 'modelContent' );
+		}
 
 		if( !empty( $this->type ) ) {
 
@@ -528,10 +548,15 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 		$modelTable = $this->modelService->getModelTable();
 		$siteTable	= Yii::$app->factory->get( 'siteService' )->getModelTable();
 
-		$query	= $this->joinModelContent ? $modelClass::find()->joinWith( 'modelContent' ) : $modelClass::find();
+		$query	= empty( $this->query ) ? $modelClass::find() : $this->query;
 		$sort	= $this->getOrder();
 
 		$conditions = [];
+
+		if( $this->joinModelContent ) {
+
+			$query->joinWith( 'modelContent' );
+		}
 
 		$conditions[ "$modelTable.featured" ] = true;
 
@@ -592,10 +617,15 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 		$modelTable = $this->modelService->getModelTable();
 		$siteTable	= Yii::$app->factory->get( 'siteService' )->getModelTable();
 
-		$query	= $this->joinModelContent ? $modelClass::find()->joinWith( 'modelContent' ) : $modelClass::find();
+		$query	= empty( $this->query ) ? $modelClass::find() : $this->query;
 		$sort	= $this->getOrder();
 
 		$conditions = [];
+
+		if( $this->joinModelContent ) {
+
+			$query->joinWith( 'modelContent' );
+		}
 
 		if( !empty( $this->type ) ) {
 
@@ -654,10 +684,15 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 		$modelTable = $this->modelService->getModelTable();
 		$siteTable	= Yii::$app->factory->get( 'siteService' )->getModelTable();
 
-		$query	= $this->joinModelContent ? $modelClass::find()->joinWith( 'modelContent' ) : $modelClass::find();
+		$query	= empty( $this->query ) ? $modelClass::find() : $this->query;
 		$sort	= $this->getOrder();
 
 		$conditions = [];
+
+		if( $this->joinModelContent ) {
+
+			$query->joinWith( 'modelContent' );
+		}
 
 		$conditions[ "$modelTable.popular" ] = true;
 
@@ -718,10 +753,15 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 		$modelTable = $this->modelService->getModelTable();
 		$siteTable	= Yii::$app->factory->get( 'siteService' )->getModelTable();
 
-		$query	= $this->joinModelContent ? $modelClass::find()->joinWith( 'modelContent' ) : $modelClass::find();
+		$query	= empty( $this->query ) ? $modelClass::find() : $this->query;
 		$sort	= $this->getOrder();
 
 		$conditions = [];
+
+		if( $this->joinModelContent ) {
+
+			$query->joinWith( 'modelContent' );
+		}
 
 		$conditions[ "$modelTable.createdBy" ] = $author->id;
 
