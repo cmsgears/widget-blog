@@ -44,6 +44,8 @@ class ArticleWidget extends \cmsgears\widgets\club\base\PageWidget {
 
 	public $type = CmsGlobal::TYPE_ARTICLE;
 
+	public $parentType = CmsGlobal::TYPE_ARTICLE;
+
 	// Protected --------------
 
 	protected $searchContent = true;

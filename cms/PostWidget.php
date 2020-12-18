@@ -42,6 +42,8 @@ class PostWidget extends \cmsgears\widgets\club\base\PageWidget {
 
 	public $type = CmsGlobal::TYPE_POST;
 
+	public $parentType = CmsGlobal::TYPE_POST;
+
 	// Protected --------------
 
 	protected $searchContent	= true;

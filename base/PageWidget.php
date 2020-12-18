@@ -98,6 +98,9 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 	// Model Type
 	public $type;
 
+	// Parent Type
+	public $parentType;
+
 	// Protected --------------
 
 	protected $modelService;
@@ -280,7 +283,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 				'query' => $query, 'limit' => $this->limit, 'public' => true, 'excludeMainSite' => true,
 				'searchContent' => $this->searchContent, 'category' => $this->category,
 				'sort' => $sort, 'route' => $this->route,
-				'parentType' => $this->type, 'conditions' => $conditions
+				'parentType' => $this->parentType, 'conditions' => $conditions
 			]);
 		}
 		// Active Site Only
@@ -290,7 +293,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 				'query' => $query, 'limit' => $this->limit, 'public' => true, 'siteOnly' => true,
 				'searchContent' => $this->searchContent, 'category' => $this->category,
 				'sort' => $sort, 'route' => $this->route,
-				'parentType' => $this->type, 'conditions' => $conditions
+				'parentType' => $this->parentType, 'conditions' => $conditions
 			]);
 		}
 		// Specific Site Only
@@ -300,7 +303,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 				'query' => $query, 'limit' => $this->limit, 'public' => true, 'siteOnly' => true, 'siteId' => $this->siteId,
 				'searchContent' => $this->searchContent, 'category' => $this->category,
 				'sort' => $sort, 'route' => $this->route,
-				'parentType' => $this->type, 'conditions' => $conditions
+				'parentType' => $this->parentType, 'conditions' => $conditions
 			]);
 		}
 		// All Sites
@@ -314,7 +317,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 				'query' => $query, 'limit' => $this->limit, 'public' => true, 'ignoreSite' => true,
 				'searchContent' => $this->searchContent, 'category' => $this->category,
 				'sort' => $sort, 'route' => $this->route,
-				'parentType' => $this->type, 'conditions' => $conditions
+				'parentType' => $this->parentType, 'conditions' => $conditions
 			]);
 		}
 	}
@@ -348,7 +351,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 				'query' => $query, 'limit' => $this->limit, 'public' => true, 'excludeMainSite' => true,
 				'searchContent' => $this->searchContent, 'tag' => $this->tag,
 				'sort' => $sort, 'route' => $this->route,
-				'parentType' => $this->type, 'conditions' => $conditions
+				'parentType' => $this->parentType, 'conditions' => $conditions
 			]);
 		}
 		// Active Site Only
@@ -358,7 +361,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 				'query' => $query, 'limit' => $this->limit, 'public' => true, 'siteOnly' => true,
 				'searchContent' => $this->searchContent, 'tag' => $this->tag,
 				'sort' => $sort, 'route' => $this->route,
-				'parentType' => $this->type, 'conditions' => $conditions
+				'parentType' => $this->parentType, 'conditions' => $conditions
 			]);
 		}
 		// Specific Site Only
@@ -368,7 +371,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 				'query' => $query, 'limit' => $this->limit, 'public' => true, 'siteOnly' => true, 'siteId' => $this->siteId,
 				'searchContent' => $this->searchContent, 'tag' => $this->tag,
 				'sort' => $sort, 'route' => $this->route,
-				'parentType' => $this->type, 'conditions' => $conditions
+				'parentType' => $this->parentType, 'conditions' => $conditions
 			]);
 		}
 		// All Sites
@@ -382,7 +385,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 				'query' => $query, 'limit' => $this->limit, 'public' => true, 'ignoreSite' => true,
 				'searchContent' => $this->searchContent, 'tag' => $this->tag,
 				'sort' => $sort, 'route' => $this->route,
-				'parentType' => $this->type, 'conditions' => $conditions
+				'parentType' => $this->parentType, 'conditions' => $conditions
 			]);
 		}
 	}
@@ -418,7 +421,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 				'query' => $query, 'limit' => $this->limit, 'public' => true, 'excludeMainSite' => true,
 				'searchContent' => $this->searchContent,
 				'sort' => $sort, 'route' => $this->route,
-				'parentType' => $this->type, 'conditions' => $conditions
+				'parentType' => $this->parentType, 'conditions' => $conditions
 			]);
 		}
 		// Active Site Only
@@ -428,7 +431,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 				'query' => $query, 'limit' => $this->limit, 'public' => true, 'siteOnly' => true,
 				'searchContent' => $this->searchContent,
 				'sort' => $sort, 'route' => $this->route,
-				'parentType' => $this->type, 'conditions' => $conditions
+				'parentType' => $this->parentType, 'conditions' => $conditions
 			]);
 		}
 		// Specific Site Only
@@ -438,7 +441,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 				'query' => $query, 'limit' => $this->limit, 'public' => true, 'siteOnly' => true, 'siteId' => $this->siteId,
 				'searchContent' => $this->searchContent,
 				'sort' => $sort, 'route' => $this->route,
-				'parentType' => $this->type, 'conditions' => $conditions
+				'parentType' => $this->parentType, 'conditions' => $conditions
 			]);
 		}
 		// All Sites
@@ -452,7 +455,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 				'query' => $query, 'limit' => $this->limit, 'public' => true, 'ignoreSite' => true,
 				'searchContent' => $this->searchContent,
 				'sort' => $sort, 'route' => $this->route,
-				'parentType' => $this->type, 'conditions' => $conditions
+				'parentType' => $this->parentType, 'conditions' => $conditions
 			]);
 		}
 	}
