@@ -506,7 +506,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 			$this->dataProvider	= $this->modelService->getPageForSearch([
 				'query' => $query, 'route' => $this->route, 'public' => true, 'excludeMainSite' => true,
 				'searchContent' => $this->searchContent, 'searchCategory' => $this->searchCategory, 'searchTag' => $this->searchtag,
-				'limit' => $this->limit, 'sort' => $sort, 'conditions' => $conditions
+				'limit' => $this->limit, 'sort' => $sort, 'pquery' => $this->printQuery, 'conditions' => $conditions
 			]);
 		}
 		// Active Site Only
@@ -515,7 +515,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 			$this->dataProvider	= $this->modelService->getPageForSearch([
 				'query' => $query, 'route' => $this->route, 'public' => true, 'siteOnly' => true,
 				'searchContent' => $this->searchContent, 'searchCategory' => $this->searchCategory, 'searchTag' => $this->searchtag,
-				'limit' => $this->limit, 'sort' => $sort, 'conditions' => $conditions
+				'limit' => $this->limit, 'sort' => $sort, 'pquery' => $this->printQuery, 'conditions' => $conditions
 			]);
 		}
 		// Specific Site Only
@@ -524,7 +524,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 			$this->dataProvider	= $this->modelService->getPageForSearch([
 				'query' => $query, 'route' => $this->route, 'public' => true, 'siteOnly' => true, 'siteId' => $this->siteId,
 				'searchContent' => $this->searchContent, 'searchCategory' => $this->searchCategory, 'searchTag' => $this->searchtag,
-				'limit' => $this->limit, 'sort' => $sort, 'conditions' => $conditions
+				'limit' => $this->limit, 'sort' => $sort, 'pquery' => $this->printQuery, 'conditions' => $conditions
 			]);
 		}
 		// All Sites
@@ -537,7 +537,7 @@ abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 			$this->dataProvider	= $this->modelService->getPageForSearch([
 				'query' => $query, 'route' => $this->route, 'public' => true, 'ignoreSite' => true,
 				'searchContent' => $this->searchContent, 'searchCategory' => $this->searchCategory, 'searchTag' => $this->searchtag,
-				'limit' => $this->limit, 'sort' => $sort, 'conditions' => $conditions
+				'limit' => $this->limit, 'sort' => $sort, 'pquery' => $this->printQuery, 'conditions' => $conditions
 			]);
 		}
 	}
