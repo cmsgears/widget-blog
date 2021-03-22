@@ -42,9 +42,11 @@ class PageWidget extends \cmsgears\widgets\club\base\PageWidget {
 
 	public $singlePath = null;
 
-	// Protected --------------
+	public $type = CmsGlobal::TYPE_PAGE;
 
-	protected $type = CmsGlobal::TYPE_PAGE;
+	public $parentType = CmsGlobal::TYPE_PAGE;
+
+	// Protected --------------
 
 	protected $searchContent = true;
 

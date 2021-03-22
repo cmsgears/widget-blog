@@ -10,17 +10,15 @@
 namespace cmsgears\widgets\club\base;
 
 // Yii Imports
+use Yii;
 use yii\data\Sort;
-
-// CMG Imports
-use cmsgears\core\common\base\PageWidget as BasePageWidget;
 
 /**
  * PageWidget is the base widget of page models.
  *
  * @since 1.0.0
  */
-abstract class PageWidget extends BasePageWidget {
+abstract class PageWidget extends \cmsgears\core\common\base\PageWidget {
 
 	// Variables ---------------------------------------------------
 
@@ -72,6 +70,8 @@ abstract class PageWidget extends BasePageWidget {
 	 */
 	public $model;
 
+	public $joinModelContent = true;
+
 	/**
 	 * Flag to enable default site banner.
 	 *
@@ -95,11 +95,15 @@ abstract class PageWidget extends BasePageWidget {
 	public $tagSlug;
 	public $tagType;
 
+	// Model Type
+	public $type;
+
+	// Parent Type
+	public $parentType;
+
 	// Protected --------------
 
 	protected $modelService;
-
-	protected $type;
 
 	protected $searchContent	= true;
 	protected $searchCategory	= false;
@@ -144,17 +148,25 @@ abstract class PageWidget extends BasePageWidget {
 
 					$categoryService	= Yii::$app->factory->get( 'categoryService' );
 					$this->category		= $categoryService->getBySlugType( $this->categorySlug, $this->categoryType );
-				}
 
+					if( isset( $this->category ) ) {
+
+						$this->initCategoryModels();
+					}
+				}
 				// Check Tag
-				if( empty( $this->tag ) && isset( $this->tagSlug ) && isset( $this->tagType ) ) {
+				else if( empty( $this->tag ) && isset( $this->tagSlug ) && isset( $this->tagType ) ) {
 
-					$tagService		= Yii::$app->factory->get( 'tagService' );
-					$this->tag		= $tagService->getBySlugType( $this->tagSlug, $this->tagType );
+					$tagService	= Yii::$app->factory->get( 'tagService' );
+					$this->tag	= $tagService->getBySlugType( $this->tagSlug, $this->tagType );
+
+					if( isset( $this->tag ) ) {
+
+						$this->initTagModels();
+					}
 				}
-
 				// Category
-				if( isset( $this->category ) ) {
+				else if( isset( $this->category ) ) {
 
 					$this->initCategoryModels();
 				}
@@ -175,7 +187,7 @@ abstract class PageWidget extends BasePageWidget {
 				}
 			}
 
-			$this->modelPage = $this->dataProvider->getModels();
+			$this->modelPage = isset( $this->dataProvider ) ? $this->dataProvider->getModels() : [];
 		}
 		// Find models for popular, recent and related widgets
 		else {
@@ -244,212 +256,326 @@ abstract class PageWidget extends BasePageWidget {
 
 	protected function initCategoryModels() {
 
-		$modelTable		= $this->modelService->getModelTable();
-		$this->route	= empty( $this->route ) ? "category/{$this->category->slug}" : "$this->route/category/{$this->category->slug}";
+		$modelClass = $this->modelService->getModelClass();
+		$modelTable = $this->modelService->getModelTable();
+		$siteTable	= Yii::$app->factory->get( 'siteService' )->getModelTable();
+
+		$this->route = empty( $this->route ) ? "category/{$this->category->slug}" : "$this->route/category/{$this->category->slug}";
+
+		$query	= empty( $this->query ) ? $modelClass::find() : $this->query;
+		$sort	= $this->getSort();
+
+		$conditions = [];
+
+		if( $this->joinModelContent ) {
+
+			$query->joinWith( 'modelContent' );
+		}
+
+		if( !empty( $this->type ) ) {
+
+			$conditions[ "$modelTable.type" ] = $this->type;
+		}
 
 		// Child Sites Only
 		if( $this->excludeMain ) {
 
+			$query->joinWith( 'site' );
+
+			$conditions[ "$siteTable.primary" ] = true;
+
 			$this->dataProvider	= $this->modelService->getPageForSearch([
-				'limit' => $this->limit, 'public' => true, 'excludeMainSite' => true,
+				'query' => $query, 'limit' => $this->limit, 'public' => true, 'excludeMainSite' => true,
 				'searchContent' => $this->searchContent, 'category' => $this->category,
-				'route' => $this->route,
-				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type ]
+				'sort' => $sort, 'route' => $this->route,
+				'parentType' => $this->parentType, 'conditions' => $conditions
 			]);
 		}
 		// Active Site Only
 		else if( $this->siteModels ) {
 
 			$this->dataProvider	= $this->modelService->getPageForSearch([
-				'limit' => $this->limit, 'public' => true, 'siteOnly' => true,
+				'query' => $query, 'limit' => $this->limit, 'public' => true, 'siteOnly' => true,
 				'searchContent' => $this->searchContent, 'category' => $this->category,
-				'route' => $this->route,
-				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type ]
+				'sort' => $sort, 'route' => $this->route,
+				'parentType' => $this->parentType, 'conditions' => $conditions
 			]);
 		}
 		// Specific Site Only
 		else if( isset( $this->siteId ) ) {
 
 			$this->dataProvider	= $this->modelService->getPageForSearch([
-				'limit' => $this->limit, 'public' => true, 'siteOnly' => true, 'siteId' => $this->siteId,
+				'query' => $query, 'limit' => $this->limit, 'public' => true, 'siteOnly' => true, 'siteId' => $this->siteId,
 				'searchContent' => $this->searchContent, 'category' => $this->category,
-				'route' => $this->route,
-				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type ]
+				'sort' => $sort, 'route' => $this->route,
+				'parentType' => $this->parentType, 'conditions' => $conditions
 			]);
 		}
 		// All Sites
 		else {
 
+			$query->joinWith( 'site' );
+
+			$conditions[ "$siteTable.primary" ] = true;
+
 			$this->dataProvider	= $this->modelService->getPageForSearch([
-				'limit' => $this->limit, 'public' => true, 'ignoreSite' => true,
+				'query' => $query, 'limit' => $this->limit, 'public' => true, 'ignoreSite' => true,
 				'searchContent' => $this->searchContent, 'category' => $this->category,
-				'route' => $this->route,
-				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type ]
+				'sort' => $sort, 'route' => $this->route,
+				'parentType' => $this->parentType, 'conditions' => $conditions
 			]);
 		}
 	}
 
 	protected function initTagModels() {
 
-		$modelTable		= $this->modelService->getModelTable();
-		$this->route	= empty( $this->route ) ? "tag/{$this->tag->slug}" : "$this->route/tag/{$this->tag->slug}";
+		$modelClass = $this->modelService->getModelClass();
+		$modelTable = $this->modelService->getModelTable();
+		$siteTable	= Yii::$app->factory->get( 'siteService' )->getModelTable();
+
+		$this->route = empty( $this->route ) ? "tag/{$this->tag->slug}" : "$this->route/tag/{$this->tag->slug}";
+
+		$query	= empty( $this->query ) ? $modelClass::find() : $this->query;
+		$sort	= $this->getSort();
+
+		$conditions = [];
+
+		if( $this->joinModelContent ) {
+
+			$query->joinWith( 'modelContent' );
+		}
+
+		if( !empty( $this->type ) ) {
+
+			$conditions[ "$modelTable.type" ] = $this->type;
+		}
 
 		// Child Sites Only
 		if( $this->excludeMain ) {
 
+			$query->joinWith( 'site' );
+
+			$conditions[ "$siteTable.primary" ] = true;
+
 			$this->dataProvider	= $this->modelService->getPageForSearch([
-				'limit' => $this->limit, 'public' => true, 'excludeMainSite' => true,
+				'query' => $query, 'limit' => $this->limit, 'public' => true, 'excludeMainSite' => true,
 				'searchContent' => $this->searchContent, 'tag' => $this->tag,
-				'route' => $this->route,
-				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type ]
+				'sort' => $sort, 'route' => $this->route,
+				'parentType' => $this->parentType, 'conditions' => $conditions
 			]);
 		}
 		// Active Site Only
 		else if( $this->siteModels ) {
 
 			$this->dataProvider	= $this->modelService->getPageForSearch([
-				'limit' => $this->limit, 'public' => true, 'siteOnly' => true,
+				'query' => $query, 'limit' => $this->limit, 'public' => true, 'siteOnly' => true,
 				'searchContent' => $this->searchContent, 'tag' => $this->tag,
-				'route' => $this->route,
-				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type ]
+				'sort' => $sort, 'route' => $this->route,
+				'parentType' => $this->parentType, 'conditions' => $conditions
 			]);
 		}
 		// Specific Site Only
 		else if( isset( $this->siteId ) ) {
 
 			$this->dataProvider	= $this->modelService->getPageForSearch([
-				'limit' => $this->limit, 'public' => true, 'siteOnly' => true, 'siteId' => $this->siteId,
+				'query' => $query, 'limit' => $this->limit, 'public' => true, 'siteOnly' => true, 'siteId' => $this->siteId,
 				'searchContent' => $this->searchContent, 'tag' => $this->tag,
-				'route' => $this->route,
-				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type ]
+				'sort' => $sort, 'route' => $this->route,
+				'parentType' => $this->parentType, 'conditions' => $conditions
 			]);
 		}
 		// All Sites
 		else {
 
+			$query->joinWith( 'site' );
+
+			$conditions[ "$siteTable.primary" ] = true;
+
 			$this->dataProvider	= $this->modelService->getPageForSearch([
-				'limit' => $this->limit, 'public' => true, 'ignoreSite' => true,
+				'query' => $query, 'limit' => $this->limit, 'public' => true, 'ignoreSite' => true,
 				'searchContent' => $this->searchContent, 'tag' => $this->tag,
-				'route' => $this->route,
-				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type ]
+				'sort' => $sort, 'route' => $this->route,
+				'parentType' => $this->parentType, 'conditions' => $conditions
 			]);
 		}
 	}
 
 	protected function initAuthorModels() {
 
-		$modelTable		= $this->modelService->getModelTable();
-		$this->route	= empty( $this->route ) ? "author/{$this->author->username}" : "$this->route/author/{$this->author->username}";
+		$modelClass = $this->modelService->getModelClass();
+		$modelTable = $this->modelService->getModelTable();
+		$siteTable	= Yii::$app->factory->get( 'siteService' )->getModelTable();
+
+		$this->route = empty( $this->route ) ? "author/{$this->author->username}" : "$this->route/author/{$this->author->username}";
+
+		$query	= empty( $this->query ) ? $modelClass::find() : $this->query;
+		$sort	= $this->getSort();
+
+		$conditions = [];
+
+		if( $this->joinModelContent ) {
+
+			$query->joinWith( 'modelContent' );
+		}
+
+		$conditions[ "$modelTable.createdBy" ] = $this->author->id;
+
+		if( !empty( $this->type ) ) {
+
+			$conditions[ "$modelTable.type" ] = $this->type;
+		}
 
 		// Child Sites Only
 		if( $this->excludeMain ) {
 
+			$query->joinWith( 'site' );
+
+			$conditions[ "$siteTable.primary" ] = true;
+
 			$this->dataProvider	= $this->modelService->getPageForSearch([
-				'limit' => $this->limit, 'public' => true, 'excludeMainSite' => true,
+				'query' => $query, 'limit' => $this->limit, 'public' => true, 'excludeMainSite' => true,
 				'searchContent' => $this->searchContent,
-				'route' => $this->route,
-				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $this->author->id ]
+				'sort' => $sort, 'route' => $this->route,
+				'parentType' => $this->parentType, 'conditions' => $conditions
 			]);
 		}
 		// Active Site Only
 		else if( $this->siteModels ) {
 
 			$this->dataProvider	= $this->modelService->getPageForSearch([
-				'limit' => $this->limit, 'public' => true, 'siteOnly' => true,
+				'query' => $query, 'limit' => $this->limit, 'public' => true, 'siteOnly' => true,
 				'searchContent' => $this->searchContent,
-				'route' => $this->route,
-				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $this->author->id ]
+				'sort' => $sort, 'route' => $this->route,
+				'parentType' => $this->parentType, 'conditions' => $conditions
 			]);
 		}
 		// Specific Site Only
 		else if( isset( $this->siteId ) ) {
 
 			$this->dataProvider	= $this->modelService->getPageForSearch([
-				'limit' => $this->limit, 'public' => true, 'siteOnly' => true, 'siteId' => $this->siteId,
+				'query' => $query, 'limit' => $this->limit, 'public' => true, 'siteOnly' => true, 'siteId' => $this->siteId,
 				'searchContent' => $this->searchContent,
-				'route' => $this->route,
-				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $this->author->id ]
+				'sort' => $sort, 'route' => $this->route,
+				'parentType' => $this->parentType, 'conditions' => $conditions
 			]);
 		}
 		// All Sites
 		else {
 
+			$query->joinWith( 'site' );
+
+			$conditions[ "$siteTable.primary" ] = true;
+
 			$this->dataProvider	= $this->modelService->getPageForSearch([
-				'limit' => $this->limit, 'public' => true, 'ignoreSite' => true,
+				'query' => $query, 'limit' => $this->limit, 'public' => true, 'ignoreSite' => true,
 				'searchContent' => $this->searchContent,
-				'route' => $this->route,
-				'parentType' => $this->type, 'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $this->author->id ]
+				'sort' => $sort, 'route' => $this->route,
+				'parentType' => $this->parentType, 'conditions' => $conditions
 			]);
 		}
 	}
 
 	public function initPageModels() {
 
+		$modelClass = $this->modelService->getModelClass();
 		$modelTable = $this->modelService->getModelTable();
+		$siteTable	= Yii::$app->factory->get( 'siteService' )->getModelTable();
 
-		$sort = new Sort([
-			'attributes' => [
-				'id' => [
-					'asc' => [ "$modelTable.id" => SORT_ASC ],
-					'desc' => [ "$modelTable.id" => SORT_DESC ],
-					'default' => SORT_DESC,
-					'label' => 'Id'
-				]
-			],
-			'defaultOrder' => [
-				'id' => SORT_DESC
-			]
-		]);
+		$query	= empty( $this->query ) ? $modelClass::find() : $this->query;
+		$sort	= $this->getSort();
+
+		$conditions = [];
+
+		if( $this->joinModelContent ) {
+
+			$query->joinWith( 'modelContent' );
+		}
+
+		if( !empty( $this->type ) ) {
+
+			$conditions[ "$modelTable.type" ] = $this->type;
+		}
 
 		// Child Sites Only
 		if( $this->excludeMain ) {
 
+			$query->joinWith( 'site' );
+
+			$conditions[ "$siteTable.primary" ] = true;
+
 			$this->dataProvider	= $this->modelService->getPageForSearch([
-				'route' => $this->route, 'public' => true, 'excludeMainSite' => true,
+				'query' => $query, 'route' => $this->route, 'public' => true, 'excludeMainSite' => true,
 				'searchContent' => $this->searchContent, 'searchCategory' => $this->searchCategory, 'searchTag' => $this->searchtag,
-				'limit' => $this->limit, 'sort' => $sort, 'conditions' => [ "$modelTable.type" => $this->type ]
+				'limit' => $this->limit, 'sort' => $sort, 'pquery' => $this->printQuery, 'conditions' => $conditions
 			]);
 		}
 		// Active Site Only
 		else if( $this->siteModels ) {
 
 			$this->dataProvider	= $this->modelService->getPageForSearch([
-				'route' => $this->route, 'public' => true, 'siteOnly' => true,
+				'query' => $query, 'route' => $this->route, 'public' => true, 'siteOnly' => true,
 				'searchContent' => $this->searchContent, 'searchCategory' => $this->searchCategory, 'searchTag' => $this->searchtag,
-				'limit' => $this->limit, 'sort' => $sort, 'conditions' => [ "$modelTable.type" => $this->type ]
+				'limit' => $this->limit, 'sort' => $sort, 'pquery' => $this->printQuery, 'conditions' => $conditions
 			]);
 		}
 		// Specific Site Only
 		else if( isset( $this->siteId ) ) {
 
 			$this->dataProvider	= $this->modelService->getPageForSearch([
-				'route' => $this->route, 'public' => true, 'siteOnly' => true, 'siteId' => $this->siteId,
+				'query' => $query, 'route' => $this->route, 'public' => true, 'siteOnly' => true, 'siteId' => $this->siteId,
 				'searchContent' => $this->searchContent, 'searchCategory' => $this->searchCategory, 'searchTag' => $this->searchtag,
-				'limit' => $this->limit, 'sort' => $sort, 'conditions' => [ "$modelTable.type" => $this->type ]
+				'limit' => $this->limit, 'sort' => $sort, 'pquery' => $this->printQuery, 'conditions' => $conditions
 			]);
 		}
 		// All Sites
 		else {
 
+			$query->joinWith( 'site' );
+
+			$conditions[ "$siteTable.primary" ] = true;
+
 			$this->dataProvider	= $this->modelService->getPageForSearch([
-				'route' => $this->route, 'public' => true, 'ignoreSite' => true,
+				'query' => $query, 'route' => $this->route, 'public' => true, 'ignoreSite' => true,
 				'searchContent' => $this->searchContent, 'searchCategory' => $this->searchCategory, 'searchTag' => $this->searchtag,
-				'limit' => $this->limit, 'sort' => $sort, 'conditions' => [ "$modelTable.type" => $this->type ]
+				'limit' => $this->limit, 'sort' => $sort, 'pquery' => $this->printQuery, 'conditions' => $conditions
 			]);
 		}
 	}
 
 	public function initFeatured() {
 
+		$modelClass = $this->modelService->getModelClass();
 		$modelTable = $this->modelService->getModelTable();
+		$siteTable	= Yii::$app->factory->get( 'siteService' )->getModelTable();
+
+		$query	= empty( $this->query ) ? $modelClass::find() : $this->query;
+		$sort	= $this->getOrder();
+
+		$conditions = [];
+
+		if( $this->joinModelContent ) {
+
+			$query->joinWith( 'modelContent' );
+		}
+
+		$conditions[ "$modelTable.featured" ] = true;
+
+		if( !empty( $this->type ) ) {
+
+			$conditions[ "$modelTable.type" ] = $this->type;
+		}
 
 		// Child Sites Only
 		if( $this->excludeMain ) {
 
+			$query->joinWith( 'site' );
+
+			$conditions[ "$siteTable.primary" ] = true;
+
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
-				'sort' => [ 'id' => SORT_DESC ], 'excludeMainSite' => true,
-				'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.featured" => true ]
+				'query' => $query, 'sort' => $sort, 'excludeMainSite' => true,
+				'conditions' => $conditions
 			]);
 		}
 		// Active Site Only
@@ -457,8 +583,8 @@ abstract class PageWidget extends BasePageWidget {
 
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
-				'sort' => [ 'id' => SORT_DESC ], 'siteOnly' => true,
-				'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.featured" => true ]
+				'query' => $query, 'sort' => $sort, 'siteOnly' => true,
+				'conditions' => $conditions
 			]);
 		}
 		// Specific Site Only
@@ -466,32 +592,57 @@ abstract class PageWidget extends BasePageWidget {
 
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
-				'sort' => [ 'id' => SORT_DESC ], 'siteOnly' => true, 'siteId' => $this->siteId,
-				'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.featured" => true ]
+				'query' => $query, 'sort' => $sort, 'siteOnly' => true, 'siteId' => $this->siteId,
+				'conditions' => $conditions
 			]);
 		}
 		// All Sites
 		else {
 
+			$query->joinWith( 'site' );
+
+			$conditions[ "$siteTable.primary" ] = true;
+
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
-				'sort' => [ 'id' => SORT_DESC ], 'ignoreSite' => true,
-				'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.featured" => true ]
+				'query' => $query, 'sort' => $sort, 'ignoreSite' => true,
+				'conditions' => $conditions
 			]);
 		}
 	}
 
 	public function initRecent() {
 
+		$modelClass = $this->modelService->getModelClass();
 		$modelTable = $this->modelService->getModelTable();
+		$siteTable	= Yii::$app->factory->get( 'siteService' )->getModelTable();
+
+		$query	= empty( $this->query ) ? $modelClass::find() : $this->query;
+		$sort	= $this->getOrder();
+
+		$conditions = [];
+
+		if( $this->joinModelContent ) {
+
+			$query->joinWith( 'modelContent' );
+		}
+
+		if( !empty( $this->type ) ) {
+
+			$conditions[ "$modelTable.type" ] = $this->type;
+		}
 
 		// Child Sites Only
 		if( $this->excludeMain ) {
 
+			$query->joinWith( 'site' );
+
+			$conditions[ "$siteTable.primary" ] = true;
+
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
-				'sort' => [ 'id' => SORT_DESC ], 'excludeMainSite' => true,
-				'conditions' => [ "$modelTable.type" => $this->type ]
+				'query' => $query, 'sort' => $sort, 'excludeMainSite' => true,
+				'conditions' => $conditions
 			]);
 		}
 		// Active Site Only
@@ -499,8 +650,8 @@ abstract class PageWidget extends BasePageWidget {
 
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
-				'sort' => [ 'id' => SORT_DESC ], 'siteOnly' => true,
-				'conditions' => [ "$modelTable.type" => $this->type ]
+				'query' => $query, 'sort' => $sort, 'siteOnly' => true,
+				'conditions' => $conditions
 			]);
 		}
 		// Specific Site Only
@@ -508,32 +659,59 @@ abstract class PageWidget extends BasePageWidget {
 
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
-				'sort' => [ 'id' => SORT_DESC ], 'siteOnly' => true, 'siteId' => $this->siteId,
-				'conditions' => [ "$modelTable.type" => $this->type ]
+				'query' => $query, 'sort' => $sort, 'siteOnly' => true, 'siteId' => $this->siteId,
+				'conditions' => $conditions
 			]);
 		}
 		// All Sites
 		else {
 
+			$query->joinWith( 'site' );
+
+			$conditions[ "$siteTable.primary" ] = true;
+
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
-				'sort' => [ 'id' => SORT_DESC ], 'ignoreSite' => true,
-				'conditions' => [ "$modelTable.type" => $this->type ]
+				'query' => $query, 'sort' => $sort, 'ignoreSite' => true,
+				'conditions' => $conditions
 			]);
 		}
 	}
 
 	public function initPopular() {
 
+		$modelClass = $this->modelService->getModelClass();
 		$modelTable = $this->modelService->getModelTable();
+		$siteTable	= Yii::$app->factory->get( 'siteService' )->getModelTable();
+
+		$query	= empty( $this->query ) ? $modelClass::find() : $this->query;
+		$sort	= $this->getOrder();
+
+		$conditions = [];
+
+		if( $this->joinModelContent ) {
+
+			$query->joinWith( 'modelContent' );
+		}
+
+		$conditions[ "$modelTable.popular" ] = true;
+
+		if( !empty( $this->type ) ) {
+
+			$conditions[ "$modelTable.type" ] = $this->type;
+		}
 
 		// Child Sites Only
 		if( $this->excludeMain ) {
 
+			$query->joinWith( 'site' );
+
+			$conditions[ "$siteTable.primary" ] = true;
+
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
-				'sort' => [ 'id' => SORT_DESC ], 'excludeMainSite' => true,
-				'conditions' => [ "$modelTable.type" => $this->type ]
+				'query' => $query, 'sort' => $sort, 'excludeMainSite' => true,
+				'conditions' => $conditions
 			]);
 		}
 		// Active Site Only
@@ -541,8 +719,8 @@ abstract class PageWidget extends BasePageWidget {
 
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
-				'sort' => [ 'id' => SORT_DESC ], 'siteOnly' => true,
-				'conditions' => [ "$modelTable.type" => $this->type ]
+				'query' => $query, 'sort' => $sort, 'siteOnly' => true,
+				'conditions' => $conditions
 			]);
 		}
 		// Specific Site Only
@@ -550,32 +728,59 @@ abstract class PageWidget extends BasePageWidget {
 
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
-				'sort' => [ 'id' => SORT_DESC ], 'siteOnly' => true, 'siteId' => $this->siteId,
-				'conditions' => [ "$modelTable.type" => $this->type ]
+				'query' => $query, 'sort' => $sort, 'siteOnly' => true, 'siteId' => $this->siteId,
+				'conditions' => $conditions
 			]);
 		}
 		// All Sites
 		else {
 
+			$query->joinWith( 'site' );
+
+			$conditions[ "$siteTable.primary" ] = true;
+
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
-				'sort' => [ 'id' => SORT_DESC ], 'ignoreSite' => true,
-				'conditions' => [ "$modelTable.type" => $this->type ]
+				'query' => $query, 'sort' => $sort, 'ignoreSite' => true,
+				'conditions' => $conditions
 			]);
 		}
 	}
 
 	public function initAuthor( $author ) {
 
+		$modelClass = $this->modelService->getModelClass();
 		$modelTable = $this->modelService->getModelTable();
+		$siteTable	= Yii::$app->factory->get( 'siteService' )->getModelTable();
+
+		$query	= empty( $this->query ) ? $modelClass::find() : $this->query;
+		$sort	= $this->getOrder();
+
+		$conditions = [];
+
+		if( $this->joinModelContent ) {
+
+			$query->joinWith( 'modelContent' );
+		}
+
+		$conditions[ "$modelTable.createdBy" ] = $author->id;
+
+		if( !empty( $this->type ) ) {
+
+			$conditions[ "$modelTable.type" ] = $this->type;
+		}
 
 		// Child Sites Only
 		if( $this->excludeMain ) {
 
+			$query->joinWith( 'site' );
+
+			$conditions[ "$siteTable.primary" ] = true;
+
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
-				'sort' => [ 'id' => SORT_DESC ], 'excludeMainSite' => true,
-				'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $author->id ]
+				'query' => $query, 'sort' => $sort, 'excludeMainSite' => true,
+				'conditions' => $conditions
 			]);
 		}
 		// Active Site Only
@@ -583,8 +788,8 @@ abstract class PageWidget extends BasePageWidget {
 
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
-				'sort' => [ 'id' => SORT_DESC ], 'siteOnly' => true,
-				'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $author->id ]
+				'query' => $query, 'sort' => $sort, 'siteOnly' => true,
+				'conditions' => $conditions
 			]);
 		}
 		// Specific Site Only
@@ -592,26 +797,45 @@ abstract class PageWidget extends BasePageWidget {
 
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
-				'sort' => [ 'id' => SORT_DESC ], 'siteOnly' => true, 'siteId' => $this->siteId,
-				'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $author->id ]
+				'query' => $query, 'sort' => $sort, 'siteOnly' => true, 'siteId' => $this->siteId,
+				'conditions' => $conditions
 			]);
 		}
 		// All Sites
 		else {
 
+			$query->joinWith( 'site' );
+
+			$conditions[ "$siteTable.primary" ] = true;
+
 			$this->modelPage = $this->modelService->getModels([
 				'advanced' => true, 'public' => true, 'limit' => $this->limit,
-				'sort' => [ 'id' => SORT_DESC ], 'ignoreSite' => true,
-				'conditions' => [ "$modelTable.type" => $this->type, "$modelTable.createdBy" => $author->id ]
+				'query' => $query, 'sort' => $sort, 'ignoreSite' => true,
+				'conditions' => $conditions
 			]);
 		}
 	}
 
 	public function initSimilar() {
 
-		$modelTable		= $this->modelService->getModelTable();
+		$modelTable = $this->modelService->getModelTable();
+
+		if( empty( $this->model ) ) {
+
+			$params = Yii::$app->view->params;
+
+			$this->model = isset( $params[ 'model' ] ) ? $params[ 'model' ] : [];
+		}
+
 		$categoryIds	= $this->model->getCategoryIdList( true );
 		$tagIds			= $this->model->getTagIdList( true );
+
+		$conditions = [];
+
+		if( !empty( $this->type ) ) {
+
+			$conditions[ "$modelTable.type" ] = $this->type;
+		}
 
 		// Child Sites Only
 		if( $this->excludeMain ) {
@@ -619,7 +843,7 @@ abstract class PageWidget extends BasePageWidget {
 			$this->modelPage = $this->modelService->getSimilar([
 				'modelId' => $this->model->id, 'tags' => $tagIds, 'categories' => $categoryIds,
 				'limit' => $this->limit, 'excludeMainSite' => true,
-				'conditions' => [ "$modelTable.type" => $this->type ]
+				'conditions' => $conditions
 			]);
 		}
 		// Active Site Only
@@ -628,7 +852,7 @@ abstract class PageWidget extends BasePageWidget {
 			$this->modelPage = $this->modelService->getSimilar([
 				'modelId' => $this->model->id, 'tags' => $tagIds, 'categories' => $categoryIds,
 				'limit' => $this->limit, 'siteOnly' => true,
-				'conditions' => [ "$modelTable.type" => $this->type ]
+				'conditions' => $conditions
 			]);
 		}
 		// Specific Site Only
@@ -637,7 +861,7 @@ abstract class PageWidget extends BasePageWidget {
 			$this->modelPage = $this->modelService->getSimilar([
 				'modelId' => $this->model->id, 'tags' => $tagIds, 'categories' => $categoryIds,
 				'limit' => $this->limit, 'siteOnly' => true, 'siteId' => $this->siteId,
-				'conditions' => [ "$modelTable.type" => $this->type ]
+				'conditions' => $conditions
 			]);
 		}
 		// All Sites
@@ -646,9 +870,52 @@ abstract class PageWidget extends BasePageWidget {
 			$this->modelPage = $this->modelService->getSimilar([
 				'modelId' => $this->model->id, 'tags' => $tagIds, 'categories' => $categoryIds,
 				'limit' => $this->limit, 'ignoreSite' => true,
-				'conditions' => [ "$modelTable.type" => $this->type ]
+				'conditions' => $conditions
 			]);
 		}
+	}
+
+	public function getSort() {
+
+		$modelTable = $this->modelService->getModelTable();
+
+		$sortconfig = [
+			'attributes' => [
+				'id' => [
+					'asc' => [ "$modelTable.id" => SORT_ASC ],
+					'desc' => [ "$modelTable.id" => SORT_DESC ],
+					'default' => SORT_DESC,
+					'label' => 'Id'
+				]
+			],
+			'defaultOrder' => [ 'id' => SORT_DESC ]
+		];
+
+		if( $this->joinModelContent ) {
+
+			$sortconfig[ 'attributes' ][ 'pdate' ] = [
+				'asc' => [ "modelContent.publishedAt" => SORT_ASC ],
+				'desc' => [ "modelContent.publishedAt" => SORT_DESC ],
+				'default' => SORT_DESC,
+				'label' => 'Published At'
+			];
+
+			$sortconfig[ 'defaultOrder' ] = [ 'pdate' => SORT_DESC ];
+		}
+
+		$sort = new Sort( $sortconfig );
+
+		return $sort;
+	}
+
+	public function getOrder() {
+
+		if( $this->joinModelContent ) {
+
+			return [ 'publishedAt' => SORT_DESC ];
+		}
+
+		return [ 'id' => SORT_DESC ];
 	}
 
 }

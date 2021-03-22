@@ -24,7 +24,7 @@ use yii\helpers\Html;
 	<?php if( $widget->showAllPath ) { ?>
 		<div class="filler-height filler-height-medium"></div>
 		<div class="wrap-all">
-			<a href="<?= $widget-allPath ?>" class="btn btn-medium">VIEW ALL</a>
+			<a href="<?= $widget->allPath ?>" class="btn btn-medium">VIEW ALL</a>
 		</div>
 	<?php } ?>
 
